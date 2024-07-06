@@ -32,7 +32,7 @@ while running:
             in_level_passing = True
             level_passing = Level()
     elif in_level_passing:
-        level_passing.draw()
+        level_passing.draw(screen,screen_scale)
 
     #Updating display, control fps
     pygame.display.update()

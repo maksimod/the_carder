@@ -44,7 +44,7 @@ class Menu:
         self.screen_size = screen_size
         self.h = self.screen_size[1]
         self.w = self.screen_size[0]
-        self.menu_button_positions = [self.w // 64, self.w // 64 + self.menu_text_new_game_surface.get_width(),
+        self.bp = [self.w // 64, self.w // 64 + self.menu_text_new_game_surface.get_width(),
                                       self.h // 4,
                                       self.h // 4 + self.menu_text_new_game_surface.get_height(), self.w // 64,
                                       self.w // 64 + self.menu_text_continue_surface.get_width(),
@@ -78,13 +78,14 @@ class Menu:
 
     # this function draw menu buttons
     def draw_menu_buttons(self, screen):
+        bp = self.bp
         screen.blit(self.menu_text_the_carder_surface, (
         (self.w // 2) - self.menu_text_the_carder_surface.get_size()[0] // 2,
         -self.menu_text_the_carder_surface.get_size()[0] // 16))
-        screen.blit(self.menu_text_new_game_surface, (self.menu_button_positions[0], self.menu_button_positions[2]))
-        screen.blit(self.menu_text_continue_surface, (self.menu_button_positions[4], self.menu_button_positions[6]))
-        screen.blit(self.menu_text_settings_surface, (self.menu_button_positions[8], self.menu_button_positions[10]))
-        screen.blit(self.menu_text_exit_surface, (self.menu_button_positions[12], self.menu_button_positions[14]))
+        screen.blit(self.menu_text_new_game_surface, (bp[0], bp[2]))
+        screen.blit(self.menu_text_continue_surface, (bp[4], bp[6]))
+        screen.blit(self.menu_text_settings_surface, (bp[8], bp[10]))
+        screen.blit(self.menu_text_exit_surface, (bp[12], bp[14]))
 
     def draw_clouds(self, screen):
         offset = 90
@@ -102,52 +103,39 @@ class Menu:
             self.cloud_speed_x2 = random.random() * 2 + 0.3
 
     def mouse_check(self):
-        if (pygame.mouse.get_pos()[0] >= self.menu_button_positions[0] and pygame.mouse.get_pos()[0] <=
-            self.menu_button_positions[9]) and (
-                pygame.mouse.get_pos()[1] >= self.menu_button_positions[2] and pygame.mouse.get_pos()[1] <=
-                self.menu_button_positions[15]):
+        mp = pygame.mouse.get_pos()
+        bp = self.bp
+        if (mp[0] >= bp[0] and mp[0] <= bp[9]) and (mp[1] >= bp[2] and mp[1] <= bp[15]):
             self.text_color[0] = self.tc0 + 50
             self.text_color[1] = self.tc1 + 50
             self.text_color[2] = self.tc2 + 50
-            if (pygame.mouse.get_pos()[0] >= self.menu_button_positions[0] and pygame.mouse.get_pos()[0] <=
-                self.menu_button_positions[1]) and (
-                    pygame.mouse.get_pos()[1] >= self.menu_button_positions[2] and pygame.mouse.get_pos()[1] <=
-                    self.menu_button_positions[3]):
+            if (mp[0] >= bp[0] and mp[0] <= bp[1]) and (mp[1] >= bp[2] and mp[1] <= bp[3]):
                 self.menu_text_new_game_surface = self.menu_text_new_game.render('New game', False, self.text_color)
                 self.text_color[0] = self.tc0
                 self.text_color[1] = self.tc1
                 self.text_color[2] = self.tc2
-                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False,
-                                                                                     self.text_color)
+                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False, self.text_color)
                 self.menu_text_continue_surface = self.menu_text_continue.render('Continue', False, self.text_color)
                 self.menu_text_settings_surface = self.menu_text_settings.render('Settings', False, self.text_color)
                 self.menu_text_exit_surface = self.menu_text_settings.render('Exit', False, self.text_color)
                 if pygame.mouse.get_pressed()[0] == True:
                     self.next_level = True
                     pygame.mixer_music.stop()
-            elif (pygame.mouse.get_pos()[0] >= self.menu_button_positions[4] and pygame.mouse.get_pos()[0] <=
-                  self.menu_button_positions[5]) and (
-                    pygame.mouse.get_pos()[1] >= self.menu_button_positions[6] and pygame.mouse.get_pos()[1] <=
-                    self.menu_button_positions[7]):
+            elif (mp[0] >= bp[4] and mp[0] <= bp[5]) and (mp[1] >= bp[6] and mp[1] <= bp[7]):
                 self.menu_text_continue_surface = self.menu_text_continue.render('Continue', False, self.text_color)
                 self.text_color[0] = self.tc0
                 self.text_color[1] = self.tc1
                 self.text_color[2] = self.tc2
-                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False,
-                                                                                     self.text_color)
+                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False, self.text_color)
                 self.menu_text_new_game_surface = self.menu_text_new_game.render('New game', False, self.text_color)
                 self.menu_text_settings_surface = self.menu_text_settings.render('Settings', False, self.text_color)
                 self.menu_text_exit_surface = self.menu_text_settings.render('Exit', False, self.text_color)
-            elif (pygame.mouse.get_pos()[0] >= self.menu_button_positions[8] and pygame.mouse.get_pos()[0] <=
-                  self.menu_button_positions[9]) and (
-                    pygame.mouse.get_pos()[1] >= self.menu_button_positions[10] and pygame.mouse.get_pos()[1] <=
-                    self.menu_button_positions[11]):
+            elif (mp[0] >= bp[8] and mp[0] <= bp[9]) and (mp[1] >= bp[10] and mp[1] <= bp[11]):
                 self.menu_text_settings_surface = self.menu_text_settings.render('Settings', False, self.text_color)
                 self.text_color[0] = self.tc0
                 self.text_color[1] = self.tc1
                 self.text_color[2] = self.tc2
-                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False,
-                                                                                     self.text_color)
+                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False,self.text_color)
                 self.menu_text_new_game_surface = self.menu_text_new_game.render('New game', False, self.text_color)
                 self.menu_text_continue_surface = self.menu_text_continue.render('Continue', False, self.text_color)
                 self.menu_text_exit_surface = self.menu_text_settings.render('Exit', False, self.text_color)
@@ -156,8 +144,7 @@ class Menu:
                 self.text_color[0] = self.tc0
                 self.text_color[1] = self.tc1
                 self.text_color[2] = self.tc2
-                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False,
-                                                                                     self.text_color)
+                self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False, self.text_color)
                 self.menu_text_new_game_surface = self.menu_text_new_game.render('New game', False, self.text_color)
                 self.menu_text_continue_surface = self.menu_text_continue.render('Continue', False, self.text_color)
                 self.menu_text_settings_surface = self.menu_text_settings.render('Settings', False, self.text_color)
