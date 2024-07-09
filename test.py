@@ -1,14 +1,25 @@
-class Point:
-    def __init__(self,x,y):
-        self.__x = x
-        self.__y = y
+# class Point:
+#     def __init__(self,x,y):
+#         self.__x = x
+#         self.__y = y
+#
+#     def get_coord(self):
+#         return self.__x, self.__y
+#
+#     def __check_value(cls):
+#
+#
+#
+# pt = Point(1,2)
+# print(pt.get_coord())
 
-    def get_coord(self):
-        return self.__x, self.__y
+dict = {
+    3: [2,3],
+    4: [9,88,8]
+}
 
-    def __check_value(cls):
+for el in dict.keys():
+    print(el)
 
+# print(dict.keys())
 
-
-pt = Point(1,2)
-print(pt.get_coord())

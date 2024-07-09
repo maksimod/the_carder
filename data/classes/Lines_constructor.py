@@ -20,7 +20,7 @@ class Line:
         self.hero_states = pars[0]
         self.hero_max_states = pars[1]
         self.df = self.hero_states[1]
-        self.rage = self.hero_states[2]
+        if len(self.hero_states)>2: self.rage = self.hero_states[2]
         chp = self.hero_states[0]
         mhp = self.hero_max_states[0]
 

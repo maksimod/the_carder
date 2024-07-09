@@ -37,7 +37,6 @@ class Hero:
         #initialize hero hp df rage line
         self.hero_line = Line(screen_info, hero[self.hero_class], hero_position, self.player_surface.get_size())
 
-    # Draws rage, poison, mp texts
     def draw_hero_text(self):
         hero_poison_text_surface = self.hero_poison_text.render(str(self.hero_states[4]) + ' POISON', False,
                                                                 (255, 255, 255))

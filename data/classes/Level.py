@@ -1,6 +1,4 @@
-# from data.classes.levels.level1 import Level1
 from data.classes.Enemy import Enemy
-from data.classes.Hero import Hero
 
 from data.global_vars import enemies
 from data.global_vars import levels
@@ -9,13 +7,20 @@ import pygame
 from random import *
 
 class Level:
-    def __init__(self,current_level, screen_scale):
+    def __init__(self,current_level, screen_info):
+        screen = screen_info[0]
+        screen_scale = screen_info[1]
+        screen_size = screen_info[2]
         # self.background = self.enemy_type = self.ways = None
         self.current_level = current_level
         # Chose current background and enemy with random module
         current_level_parameters = levels.LEVELS[current_level]
         background_path = current_level_parameters[0][randint(0, len(current_level_parameters[0])-1)]
         self.music = current_level_parameters[1][randint(0, len(current_level_parameters[1])-1)]
+
+        get_enemies_by_level = enemies.level_enemy_types[current_level]
+        self.enemy_name = get_enemies_by_level[randint(0, len(get_enemies_by_level)-1)]
+        self.current_enemy = Enemy(self.enemy_name, screen_info)
 
 
         #Creating serfaces to make opportunity to put them on the screen
@@ -47,3 +52,4 @@ class Level:
         screen_scale = screen_info[1]
         screen_size = screen_info[2]
         screen.blit(self.background, (0, 0))
+        self.current_enemy.draw_enemy()

@@ -41,7 +41,7 @@ while running:
             in_menu = False
             in_level_passing = True
             # Go to 1st level, create a player
-            level_passing = Level(current_level, screen_scale)
+            level_passing = Level(current_level, screen_info)
             player = Hero(hero_class, screen_info)
     elif in_level_passing:
 
