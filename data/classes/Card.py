@@ -17,8 +17,8 @@ all_cards_states = {
 }
 all_cards_descriptions = {
     #[mp, attk, def, opisanie, rage, sv1,sv2]
-    0: "Attack enemy by "+str(all_cards_states[0][1]),
-    1: "Increase your defense by "+str(all_cards_states[1][2])
+    0: 'Attack enemy by '+str(all_cards_states[0][1]),
+    1: 'Increase your defense by '+str(all_cards_states[1][2])
 }
 given_cards_surfaces = []
 given_cards_surfaces_names = []
@@ -33,7 +33,7 @@ def draw_card_text(card_index, card_size, card_scale, card_translation, is_activ
     card_energy = all_cards_states[card_index][0]
     card_description = all_cards_descriptions[given_cards_surfaces_names[counter]]
     card_description_text_mas = []
-    #\n doesn not working in ... .render("cmcmc \n nhii")!
+    #\n doesn not working in ... .render('cmcmc \n nhii')!
     sym_col = 20
     for i in range(0,len(card_description), sym_col):
         card_description_text_mas.append(card_description[i:i+sym_col])

@@ -9,7 +9,7 @@ class Level1:
         self.background = pygame.transform.scale(self.background, (
             self.background.get_size()[0] * screen_scale,
             self.background.get_size()[1] * screen_scale))
-        self.ways = "FD"
+        self.ways = 'FD'
         self.enemy_type = 'images\\lev1\\enemies\\guard' + str(random.randrange(4)) + '.png'
 
     def return_lev_info(self):
