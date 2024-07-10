@@ -2,7 +2,7 @@ import pygame
 
 from data.global_vars.hero import hero
 
-from data.classes.Lines_constructor import Line
+from data.classes.constructor.Lines_constructor import Line
 
 # heroes
 hero_scale = 0.5

@@ -2,7 +2,7 @@ import pygame
 
 from data.global_vars.enemies import *
 
-from data.classes.Lines_constructor import Line
+from data.classes.constructor.Lines_constructor import Line
 
 # enemyes
 enemy_scale = 0.5

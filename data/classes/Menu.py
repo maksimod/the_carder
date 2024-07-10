@@ -78,14 +78,13 @@ class Menu:
 
     # this function draw menu buttons
     def draw_menu_buttons(self, screen):
-        bp = self.bp
         screen.blit(self.menu_text_the_carder_surface, (
         (self.w // 2) - self.menu_text_the_carder_surface.get_size()[0] // 2,
         -self.menu_text_the_carder_surface.get_size()[0] // 16))
-        screen.blit(self.menu_text_new_game_surface, (bp[0], bp[2]))
-        screen.blit(self.menu_text_continue_surface, (bp[4], bp[6]))
-        screen.blit(self.menu_text_settings_surface, (bp[8], bp[10]))
-        screen.blit(self.menu_text_exit_surface, (bp[12], bp[14]))
+        screen.blit(self.menu_text_new_game_surface, (self.bp[0], self.bp[2]))
+        screen.blit(self.menu_text_continue_surface, (self.bp[4], self.bp[6]))
+        screen.blit(self.menu_text_settings_surface, (self.bp[8], self.bp[10]))
+        screen.blit(self.menu_text_exit_surface, (self.bp[12], self.bp[14]))
 
     def draw_clouds(self, screen):
         offset = 90
