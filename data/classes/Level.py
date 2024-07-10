@@ -3,6 +3,9 @@ from data.classes.Enemy import Enemy
 from data.global_vars import enemies
 from data.global_vars import levels
 
+from data.classes.constructor.Elements import TextButton, ImgButton, Text, Img
+from data import MusicPlayer
+
 import pygame
 from random import *
 
@@ -11,6 +14,9 @@ class Level:
         screen = screen_info[0]
         screen_scale = screen_info[1]
         screen_size = screen_info[2]
+
+        w,h = screen_size
+
         # self.background = self.enemy_type = self.ways = None
         self.current_level = current_level
         # Chose current background and enemy with random module
@@ -28,9 +34,13 @@ class Level:
         self.background = pygame.transform.scale(self.background, (
             self.background.get_size()[0] * screen_scale, self.background.get_size()[1] * screen_scale))
 
+
+        src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
+        self.next_turn = ImgButton(screen_info,src,(w-300,h-300), k=0.2)
+
+
         #Start music
-        pygame.mixer_music.load(self.music)
-        pygame.mixer_music.play(-1)
+        MusicPlayer.play(self.music)
 
     def check_win(self,screen_size):
         self.h = screen_size[1]
@@ -53,3 +63,5 @@ class Level:
         self.current_enemy.draw_enemy()
         player.draw_hero()
 
+        if self.next_turn.draw_check_click():
+            print("OK!")

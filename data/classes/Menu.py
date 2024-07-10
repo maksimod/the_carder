@@ -1,9 +1,9 @@
 import pygame
 import random
 
-from data.classes.constructor.Button import Button
+from data.classes.constructor.Elements import Img, Text, ImgButton, TextButton
 
-from data.classes.constructor.Addimg import Addimg
+from data import MusicPlayer
 
 
 class Menu:
@@ -13,26 +13,14 @@ class Menu:
         screen, screen_scale, screen_size = screen_info
 
         self.next_level = False
-        self.back1_image_name = 'data/images/menu/back.png'
         self.text_size_scale = 1 * screen_scale
-        self.menu_text_the_carder = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * self.text_size_scale))
-        # Surfaces
-        ctc = [random.randrange(256 - 50), random.randrange(256 - 50), random.randrange(256 - 50)]
-        self.menu_text_the_carder_surface = self.menu_text_the_carder.render('The Carder', False, ctc)
-        self.menu_surface = pygame.image.load('data/images\\menu\\back.png')
-        self.menu_surface = pygame.transform.scale(self.menu_surface, (
-            self.menu_surface.get_size()[0] * screen_scale, self.menu_surface.get_size()[1] * screen_scale))
 
-        self.cloud1 = Addimg(self.screen_info, 'data/images\\menu\\cloud.png', k=0.25)
-        self.cloud2 = Addimg(self.screen_info, 'data/images\\menu\\cloud.png', k=0.25)
-
-        self.background1_surface = pygame.image.load(self.back1_image_name)
-        self.background1_surface = pygame.transform.scale(self.background1_surface, (
-            self.background1_surface.get_size()[0] * screen_scale,
-            self.background1_surface.get_size()[1] * screen_scale))
         self.screen_size = screen_size
         self.h = self.screen_size[1]
         self.w = self.screen_size[0]
+
+        # Surfaces
+        self.background = Img(self.screen_info, 'data/images/menu/back.png')
 
         button_text_scale = 0.6 * screen_scale
         bp = (60, 300)
@@ -43,18 +31,20 @@ class Menu:
             ("Settings", button_text_scale, tc),
             ("Exit", button_text_scale, tc)
         ]
-        self.new_game = Button(buttons_text_info[0], bp, screen)
-        self.contin = Button(buttons_text_info[1], (bp[0], bp[1] + self.new_game.get_h()), screen)
-        self.settings = Button(buttons_text_info[2], (bp[0], bp[1] + self.new_game.get_h() * 2), screen)
-        self.exit = Button(buttons_text_info[3], (bp[0], bp[1] + self.new_game.get_h() * 3), screen)
+        self.the_carder = Text(self.screen_info, "The carder", k=self.text_size_scale, color=tc)
+        self.new_game = TextButton(buttons_text_info[0], bp, screen)
+        self.contin = TextButton(buttons_text_info[1], (bp[0], bp[1] + self.new_game.get_h()), screen)
+        self.settings = TextButton(buttons_text_info[2], (bp[0], bp[1] + self.new_game.get_h() * 2), screen)
+        self.exit = TextButton(buttons_text_info[3], (bp[0], bp[1] + self.new_game.get_h() * 3), screen)
 
         # Actions
         self.create_clouds()
-        pygame.mixer_music.load('data/music/lev0.mp3')
-        pygame.mixer_music.play(-1)
+        MusicPlayer.play('data/music/lev0.mp3')
 
     # Menu_clouds
     def create_clouds(self):
+        self.cloud1 = Img(self.screen_info, 'data/images\\menu\\cloud.png', k=0.25)
+        self.cloud2 = Img(self.screen_info, 'data/images\\menu\\cloud.png', k=0.25)
         self.cloud_h1 = random.randrange(self.h - self.cloud1.get_h())
         self.last_cloud_h1 = self.cloud_h1
         self.is_collide1 = True
@@ -77,7 +67,7 @@ class Menu:
         self.cloud_x1 += self.cloud_speed_x1
         self.cloud_x2 += self.cloud_speed_x2
 
-        #If cloud go out of the screen it will be teleported to another side and change its speed and position
+        # If cloud go out of the screen it will be teleported to another side and change its speed and position
         if self.cloud_x1 > self.h + self.cloud1.get_w() + offset:
             self.cloud_x1 = -self.cloud1.get_w() - offset
             self.cloud_h1 = random.randrange(self.h - self.cloud1.get_h())
@@ -90,7 +80,8 @@ class Menu:
     def mouse_check(self):
         if self.new_game.draw_check_click():
             self.next_level = True
-            pygame.mixer_music.stop()
+            MusicPlayer.stop()
+            return True
         elif self.contin.draw_check_click():
             pass
         elif self.settings.draw_check_click():
@@ -100,16 +91,12 @@ class Menu:
             exit()
 
     def player_action_check(self):
-        if self.next_level:
-            return True
-        return False
+        if self.next_level: return True
 
     def draw(self, screen):
-        screen.blit(self.background1_surface, (0, 0))
+        self.background.draw((0, 0))
         self.draw_clouds(screen)
         self.mouse_check()
-
         # The carder text
-        screen.blit(self.menu_text_the_carder_surface, (
-            (self.w // 2) - self.menu_text_the_carder_surface.get_size()[0] // 2,
-            -self.menu_text_the_carder_surface.get_size()[0] // 16))
+
+        self.the_carder.draw((self.w // 2 - self.the_carder.get_w() // 2, -self.the_carder.get_w() // 16))

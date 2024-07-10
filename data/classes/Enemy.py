@@ -8,7 +8,7 @@ from data.classes.constructor.Lines_constructor import Line
 enemy_scale = 0.5
 enemy_position = (1000, 400)
 
-from data.classes.constructor.Addimg import Addimg
+from data.classes.constructor.Elements import Img
 class Enemy:
     def __init__(self, enemy_type, screen_info):
         self.screen_info = screen_info
@@ -52,10 +52,12 @@ class Enemy:
         if (len(enemy_intention_images)>1) and (type(enemy_intention_images) is not str):
             for el in enemy_intention_images.keys():
                 if int(current_intention[1:])<=int(el):
-                    Addimg(self.screen_info, enemy_intention_images[el], intentions_pos, k=intention_scale)
+                    intention = Img(self.screen_info, enemy_intention_images[el], k=intention_scale)
+                    intention.draw(intentions_pos)
                     break
         else:
-            Addimg(self.screen_info, enemy_intention_images, intentions_pos, k=intention_scale)
+            intention = Img(self.screen_info, enemy_intention_images, k=intention_scale)
+            intention.draw(intentions_pos)
 
     def draw_enemy(self):
         self.screen.blit(self.enemy_surface, enemy_position)
