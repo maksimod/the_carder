@@ -2,27 +2,37 @@ import pygame
 
 
 class Button:
-    def __init__(self, text, text_size_scale, text_color, pos, screen, font=None):
+    def __init__(self, button_text_info, pos, screen, font=None):
+        self.text, self.text_size_scale, self.text_color = button_text_info
+
         self.screen = screen
         self.pos = pos
 
-        self.light_text_color = [text_color[0] - 50, text_color[1] - 50, text_color[2] - 50]
+        self.light_text_color = [self.text_color[0] + 50, self.text_color[1] + 50, self.text_color[2] + 50]
 
-        if not font:
-            self.text = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * text_size_scale))
-        else:
-            self.text = pygame.font.Font(font, int(150 * text_size_scale))
+        self.text_font = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * self.text_size_scale))
+        if font is not None: self.text_font = pygame.font.Font(font, int(150 * self.text_size_scale))
 
-        self.text_surface = self.text.render(text, False, text_color)
-        self.light_text_surface = self.text.render(text, False, text_color)
+        self.text_surface = self.text_font.render(self.text, False, self.text_color)
+        self.light_text_surface = self.text_font.render(self.text, False, self.light_text_color)
 
     def draw_check_click(self):
-        px = self.pos[0]
-        py = self.pos[0]
-        bw, bh = self.text_surface.get_size()
+        px, py = self.pos
+        bw, bh = self.text_surface.get_width(), self.text_surface.get_height() // 2
         mpx, mpy = pygame.mouse.get_pos()
 
-        if (px <= mpx <= px + bw) and (py <= mpy <= py + bh):
-            self.screen.blit(self.light_text_surface, self.pos)
+        rpy = py - int(10.1 * self.text_size_scale)
+        if (px <= mpx <= px + bw) and (rpy <= mpy <= rpy + bh):
+            self.screen.blit(self.light_text_surface, (px, py - bh))
+            if pygame.mouse.get_pressed()[0]: return True
         else:
-            self.screen.blit(self.text_surface, self.pos)
+            self.screen.blit(self.text_surface, (px, py - bh))
+
+    def get_size(self):
+        return self.text_surface.get_size()
+
+    def get_w(self):
+        return self.text_surface.get_width()
+
+    def get_h(self):
+        return self.text_surface.get_height()
