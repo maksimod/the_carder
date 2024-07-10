@@ -8,9 +8,11 @@ from data.classes.constructor.Lines_constructor import Line
 enemy_scale = 0.5
 enemy_position = (1000, 400)
 
-
+from data.classes.constructor.Addimg import Addimg
 class Enemy:
     def __init__(self, enemy_type, screen_info):
+        self.screen_info = screen_info
+
         screen = screen_info[0]
         screen_scale = screen_info[1]
         screen_size = screen_info[2]
@@ -43,15 +45,17 @@ class Enemy:
         current_intention = enemies[self.enemy_type][2][current_enemy_intention]
 
         enemy_intention_images = enemy_intentions[current_intention[0]]
+
+        intentions_pos = (self.w-310*self.screen_scale, 130*self.screen_scale)
+        intention_scale = 0.5
+
         if (len(enemy_intention_images)>1) and (type(enemy_intention_images) is not str):
-            for el in enemy_intentions[current_intention[0]].keys():
+            for el in enemy_intention_images.keys():
                 if int(current_intention[1:])<=int(el):
-                    cur_intention_surface = pygame.image.load(enemy_intentions[current_intention[0]][el])
-                    self.screen.blit(cur_intention_surface, (0, 0))
+                    Addimg(self.screen_info, enemy_intention_images[el], intentions_pos, k=intention_scale)
                     break
         else:
-            cur_intention_surface = pygame.image.load(enemy_intentions[current_intention[0]])
-            self.screen.blit(cur_intention_surface, (0, 0))
+            Addimg(self.screen_info, enemy_intention_images, intentions_pos, k=intention_scale)
 
     def draw_enemy(self):
         self.screen.blit(self.enemy_surface, enemy_position)

@@ -36,9 +36,7 @@ class Level:
         self.h = screen_size[1]
         self.w = screen_size[0]
         mp = pygame.mouse.get_pos()
-        # print(mp[0],mp[1])
         if mp[0]<50 and mp[1]<50:
-            # print('OK!')
             return 1
         elif mp[0]>self.w-50 and mp[1]>self.h-50:
             return 0
@@ -47,9 +45,11 @@ class Level:
 
 
     #This function draw player, cards, background and enemy every frame
-    def draw(self, screen_info):
+    def draw(self, screen_info, player):
         screen = screen_info[0]
-        screen_scale = screen_info[1]
-        screen_size = screen_info[2]
+        # screen_scale = screen_info[1]
+        # screen_size = screen_info[2]
         screen.blit(self.background, (0, 0))
         self.current_enemy.draw_enemy()
+        player.draw_hero()
+

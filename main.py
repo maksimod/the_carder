@@ -19,10 +19,11 @@ in_menu = True
 in_level_passing = False
 
 current_level = 1
+screen_info = [screen, screen_scale, screen_size]
 
 pygame.init()
 from data.classes.Menu import Menu
-menu = Menu(screen, screen_scale, screen_size)
+menu = Menu(screen_info)
 
 from data.classes.Level import Level
 
@@ -30,8 +31,6 @@ from data.classes.Hero import Hero
 
 #hero
 hero_class = 'bercerk'
-
-screen_info = [screen, screen_scale, screen_size]
 
 while running:
     # Меню
@@ -46,12 +45,11 @@ while running:
     elif in_level_passing:
 
         # If player goes on next level
-        res = level_passing.draw(screen_info)
+        res = level_passing.draw(screen_info,player)
         if (res == 1):
             level_passing = Level(current_level, screen_scale)
             current_level += 1
 
-        player.draw_hero()
 
     # Updating display, control fps
     pygame.display.update()
