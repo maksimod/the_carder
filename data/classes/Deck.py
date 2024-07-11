@@ -1,5 +1,6 @@
 import time
 import keyboard
+# from random import shuffle
 
 import pygame
 
@@ -15,22 +16,8 @@ from data.classes.constructor.Elements import Surface
 
 class Deck:
 
-    def collect_deck(self):
-        result = []
-        for el in deck.current_deck.keys():
-            for i in range(deck.current_deck[el]):
-                #     cards_src.append(deck.cards_view[el][1])
-                result.append(el)
-        return result
-
     def __init__(self, screen_info, enemy, player):
         self.enemy,self.player = enemy,player
-
-        # self.cards_col = deck.cards_col
-
-        deck_cards = self.collect_deck()
-        shuffle(deck_cards)
-        print(deck_cards)
 
         if deck.cards_col<=6:
             k = 0.4
@@ -41,15 +28,47 @@ class Deck:
         self.screen_scale = screen_info[1]
         self.screen_size = screen_info[2]
 
+        #convert card names to real cards!
+        for i in range(len(deck.input)):
+            deck.input[i] = Card(screen_info, deck.input[i], k, i)
+
         self.cards = []
         for i in range(deck.cards_col):
-            deck.cards_input -= 1
-            self.cards.append(Card(screen_info, deck_cards[i], k, i))
+            self.cards.append(deck.input[0])
+            deck.input.pop(0)
+            deck.cards_input-=1
 
-    # def take_cards(self):
+    def take_cards(self):
+        for i in range(len(self.cards)):
+            deck.output.append(self.cards[0])
+            del self.cards[0]
+            deck.cards_output+=1
 
+        for i in range(deck.max_cards_col):
+            print('!!',deck.max_cards_col,i)
+            if deck.input:
+                self.cards.append(deck.input[0])
+                deck.input.pop(0)
+                deck.cards_input-=1
+            else:
+                deck.input = deck.output
+                deck.output = []
+                deck.cards_output = 0
+                deck.cards_input = len(deck.input)
+                shuffle(deck.input)
+                self.cards.append(deck.input[0])
+                deck.input.pop(0)
+                deck.cards_input-=1
 
-    def play_card(self, src):
+        deck.cards_col = deck.max_cards_col
+
+        for i in range(len(self.cards)):
+            self.cards[i].set_index(i)
+        # print(self.cards)
+
+        # sleep(99)
+
+    def play_card(self, src, card):
         cost = deck.cards[src][0]
         attack = deck.cards[src][1]
         defence = deck.cards[src][2]
@@ -66,6 +85,9 @@ class Deck:
                 enemies.enemies[self.enemy.get_type()][0][0] -= attack
         hero.hero[hero.hero_class][0][1]+=defence
 
+        # print(card)
+        # sleep(99)
+        deck.output.append(card)
         deck.cards_output+=1
         return True
 
@@ -75,7 +97,7 @@ class Deck:
             card_pos_x = self.screen_size[0] // 2 - (cards[0].get_width() * deck.cards_col) // 2 + i * cards[0].get_width()
             card_pos_y = self.screen_size[1] - cards[0].get_height()
             if cards[i].live(self.screen, (card_pos_x,card_pos_y)) == True:
-                if self.play_card(cards[i].get_card()):
+                if self.play_card(cards[i].get_card(), cards[i]):
                     del cards[i]
                     deck.cards_col -= 1
                     break
@@ -83,6 +105,9 @@ class Deck:
 
 
 class Card(Surface):
+
+    def set_index(self,index):
+        self.index = index
 
     def get_card(self):
         return self.card_src

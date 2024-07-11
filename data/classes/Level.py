@@ -79,14 +79,15 @@ class Level:
         screen = screen_info[0]
         screen.blit(self.background, (0, 0))
 
-        self.current_enemy.draw_enemy()
-        self.player.draw_hero()
+        if (self.current_enemy.draw_enemy()): return 'WIN'
+        if self.player.update_hero()=='DEAD': return 'DEFEAT'
 
         self.playerDeck.draw()
 
         if self.next_turn.draw_check_click():
             self.current_enemy.make_turn()
             self.player.make_turn()
+            self.playerDeck.take_cards()
             pass
         if self.input.draw_check_click():
             pass

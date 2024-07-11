@@ -11,6 +11,10 @@ hero_position = (100, 300)
 
 class Hero:
     def __init__(self, hero_class, screen_info):
+        self.poison_first_time = True
+        self.can_poison = False
+        self.previous_poison = 0
+
         screen = screen_info[0]
         screen_scale = screen_info[1]
         screen_size = screen_info[2]
@@ -41,6 +45,17 @@ class Hero:
         # self.current_mp = self.max_mp
         hero.hero[hero.hero_class][0][3] = hero.hero[hero.hero_class][1][3]
 
+        if self.can_poison:
+            hero.hero[hero.hero_class][0][0] -= self.previous_poison
+            self.previous_poison = hero.hero[hero.hero_class][0][4]
+        if (hero.hero[hero.hero_class][0][4]) and (self.poison_first_time):
+            self.poison_first_time = False
+            self.can_poison = True
+            self.previous_poison = hero.hero[hero.hero_class][0][4]
+
+
+        hero.hero[hero.hero_class][0][1] = 0
+
 
     def draw_hero_text(self):
         hero_poison_text_surface = self.hero_poison_text.render(str(self.hero_states[4]) + ' POISON', False,
@@ -53,7 +68,10 @@ class Hero:
             str(self.hero_states[3]) + '/' + str(self.hero_max_states[3]) + ' MP', False, (255, 255, 255))
         self.screen.blit(hero_mp_text_surface, (0, hero_mp_text_surface.get_height() * 3))
 
-    def draw_hero(self):
-        self.screen.blit(self.player_surface, hero_position)
-        self.draw_hero_text()
-        self.hero_line.draw(hero.hero[self.hero_class])
+    def update_hero(self):
+        if hero.hero[hero.hero_class][0][0] > 0:
+            self.screen.blit(self.player_surface, hero_position)
+            self.draw_hero_text()
+            self.hero_line.draw(hero.hero[self.hero_class])
+        else:
+            return 'DEAD'

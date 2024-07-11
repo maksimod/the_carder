@@ -116,9 +116,12 @@ class Enemy:
         )
 
     def draw_enemy(self):
-        self.screen.blit(self.enemy_surface, enemy_position)
-        self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
-        self.draw_enemy_intention()
+        if enemies[self.enemy_type][0][0]>0:
+            self.screen.blit(self.enemy_surface, enemy_position)
+            self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
+            self.draw_enemy_intention()
+        else:
+            return 'DEAD'
 
     def get_type(self):
         return self.enemy_type
