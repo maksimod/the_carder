@@ -23,7 +23,8 @@ class Surface:
         self.surface = pygame.transform.scale(self.surface,
                                               (ex.get_width() * k, ex.get_height() * k)
                                               )
-
+    def rotate(self,angle):
+        self.surface = pygame.transform.rotate(self.surface, angle)
 
 class Img(Surface):
     def __init__(self, screen_info, src, k=1):

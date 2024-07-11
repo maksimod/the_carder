@@ -6,6 +6,8 @@ from data.global_vars import levels
 from data.classes.constructor.Elements import TextButton, ImgButton, Text, Img
 from data import MusicPlayer
 
+from data.classes.Deck import Deck
+
 import pygame
 from random import *
 
@@ -42,6 +44,9 @@ class Level:
         #Start music
         MusicPlayer.play(self.music)
 
+        #create a deck
+        self.playerDeck = Deck(screen_info)
+
     def check_win(self,screen_size):
         self.h = screen_size[1]
         self.w = screen_size[0]
@@ -62,6 +67,9 @@ class Level:
         screen.blit(self.background, (0, 0))
         self.current_enemy.draw_enemy()
         player.draw_hero()
+
+        self.playerDeck.draw()
+
 
         if self.next_turn.draw_check_click():
             pass
