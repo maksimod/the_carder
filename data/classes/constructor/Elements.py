@@ -1,6 +1,7 @@
 import pygame
 import keyboard
 
+from data.global_vars.button_focus import menu_buttons
 
 class Surface:
     def get_size(self):
@@ -41,9 +42,13 @@ class Img(Surface):
 
 
 class Text(Surface):
-    def __init__(self, text, k=1, font=None, color=[0, 0, 0]):
+    def __init__(self, text, k=1, font=None, color=[255, 255, 255], sysFont = None):
         text_font = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * k))
-        if font is not None: text_font = pygame.font.Font(font, int(150 * k))
+        if font is not None:
+            text_font = pygame.font.Font(font, int(150 * k))
+        elif sysFont is not None:
+            text_font = pygame.font.SysFont(font, int(150 * k))
+
         self.surface = text_font.render(text, False, color)
 
 
@@ -52,6 +57,9 @@ class Button:
     def __init__(self, pos):
         self.pos = pos
         self.was_pressed = False
+        self.was_pressed_enter = False
+        self.was_pressed_down = False
+        self.was_pressed_up = False
 
     @staticmethod
     def make_size(mode, surface, ex, src=None, txt=None, k=0.9, font='data/text_fonts/menu_font.otf', color=None):
@@ -82,9 +90,11 @@ class Button:
 
 
 class TextButton(Button):
-    def __init__(self, button_text_info, pos, screen, font=None):
+    def __init__(self, button_text_info, pos, screen, index, font=None):
         text, text_size_scale, text_color = button_text_info
         self.text, self.text_size_scale, self.text_color = text, text_size_scale, text_color
+
+        self.index = index
 
         self.screen = screen
         super().__init__(pos)
@@ -101,7 +111,11 @@ class TextButton(Button):
         mpx, mpy = pygame.mouse.get_pos()
 
         rpy = py - int(10.1 * self.text_size_scale)
-        if (px <= mpx <= px + bw) and (rpy <= mpy <= rpy + bh):
+
+        if ((px <= mpx <= px + bw) and (rpy <= mpy <= rpy + bh)):
+            for i in range(len(menu_buttons)): menu_buttons[i] = False
+            menu_buttons[self.index] = True
+
             self.light_surface.draw(self.screen, (
                 px + (self.surface.get_width() - self.light_surface.get_width()) / 2,
                 py - bh + (self.surface.get_height() - self.light_surface.get_height()) / 2)
@@ -114,8 +128,51 @@ class TextButton(Button):
                                                     txt=self.text, color=self.light_text_color, k=self.text_size_scale)
                 if self.was_pressed: return True
         else:
+            # if self.was_pressed: return True
+            self.light_surface = self.make_size('N', self.light_surface, self.surface,
+                                                txt=self.text, color=self.light_text_color, k=self.text_size_scale)
             self.was_pressed = False
-            self.surface.draw(self.screen, (px, py - bh))
+            if not (menu_buttons[self.index]):
+                self.surface.draw(self.screen, (px, py - bh))
+
+        # Если все еще в фокусе
+        if menu_buttons[self.index]:
+
+            if keyboard.is_pressed('up'):
+                self.was_pressed_up = True
+            else:
+                if self.was_pressed_up:
+                    self.was_pressed_up = False
+                    for i in range(len(menu_buttons)): menu_buttons[i] = False
+                    if self.index == 0:
+                        menu_buttons[-1] = True
+                    else:
+                        menu_buttons[self.index - 1] = True
+
+            if keyboard.is_pressed('down'):
+                self.was_pressed_down = True
+            else:
+                if self.was_pressed_down:
+                    self.was_pressed_down = False
+                    for i in range(len(menu_buttons)): menu_buttons[i] = False
+                    if self.index >= len(menu_buttons)-1:
+                        menu_buttons[0] = True
+                    else: menu_buttons[self.index+1] = True
+
+            if keyboard.is_pressed('enter'):
+                self.light_surface = self.make_size('S', self.light_surface, self.surface)
+                self.was_pressed_enter = True
+            else:
+                if self.was_pressed_enter == True: return True
+
+            self.light_surface.draw(self.screen, (
+                px + (self.surface.get_width() - self.light_surface.get_width()) / 2,
+                py - bh + (self.surface.get_height() - self.light_surface.get_height()) / 2)
+                                    )
+            #     return True
+
+
+
 
 
 class ImgButton(Button):

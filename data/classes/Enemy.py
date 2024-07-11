@@ -8,7 +8,7 @@ from data.classes.constructor.Lines_constructor import Line
 enemy_scale = 0.5
 enemy_position = (1000, 400)
 
-from data.classes.constructor.Elements import Img
+from data.classes.constructor.Elements import Img,Text
 class Enemy:
     def __init__(self, enemy_type, screen_info):
         self.screen_info = screen_info
@@ -49,15 +49,22 @@ class Enemy:
         intentions_pos = (self.w-310*self.screen_scale, 130*self.screen_scale)
         intention_scale = 0.5
 
+        self.intention_text = Text(current_intention[1:],sysFont='arial', k=0.5)
+
         if (len(enemy_intention_images)>1) and (type(enemy_intention_images) is not str):
             for el in enemy_intention_images.keys():
                 if int(current_intention[1:])<=int(el):
                     intention = Img(self.screen_info, enemy_intention_images[el], k=intention_scale)
-                    intention.draw(intentions_pos)
+                    intention.draw(self.screen,intentions_pos)
                     break
         else:
             intention = Img(self.screen_info, enemy_intention_images, k=intention_scale)
             intention.draw(self.screen,intentions_pos)
+
+        self.intention_text.draw(self.screen, (
+            intentions_pos[0]+intention.get_width()//2-self.intention_text.get_width()//2,
+            intentions_pos[1]+intention.get_height()//2-self.intention_text.get_height()//2)
+        )
 
     def draw_enemy(self):
         self.screen.blit(self.enemy_surface, enemy_position)

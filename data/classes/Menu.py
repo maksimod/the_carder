@@ -32,10 +32,10 @@ class Menu:
             ("Exit", button_text_scale, tc)
         ]
         self.the_carder = Text("The carder", k=self.text_size_scale, color=tc)
-        self.new_game = TextButton(buttons_text_info[0], bp, screen)
-        self.contin = TextButton(buttons_text_info[1], (bp[0], bp[1] + self.new_game.get_h()), screen)
-        self.settings = TextButton(buttons_text_info[2], (bp[0], bp[1] + self.new_game.get_h() * 2), screen)
-        self.exit = TextButton(buttons_text_info[3], (bp[0], bp[1] + self.new_game.get_h() * 3), screen)
+        self.new_game = TextButton(buttons_text_info[0], bp, screen, 0)
+        self.contin = TextButton(buttons_text_info[1], (bp[0], bp[1] + self.new_game.get_h()), screen,1)
+        self.settings = TextButton(buttons_text_info[2], (bp[0], bp[1] + self.new_game.get_h() * 2), screen,2)
+        self.exit = TextButton(buttons_text_info[3], (bp[0], bp[1] + self.new_game.get_h() * 3), screen,3)
 
         # Actions
         self.create_clouds()
