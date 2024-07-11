@@ -64,4 +64,5 @@ class Level:
         player.draw_hero()
 
         if self.next_turn.draw_check_click():
-            print("OK!")
+            pass
+            # print("OK!")

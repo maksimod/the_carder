@@ -82,11 +82,11 @@ class Menu:
             self.next_level = True
             MusicPlayer.stop()
             return True
-        elif self.contin.draw_check_click():
+        if self.contin.draw_check_click():
             pass
-        elif self.settings.draw_check_click():
+        if self.settings.draw_check_click():
             pass
-        elif self.exit.draw_check_click():
+        if self.exit.draw_check_click():
             pygame.quit()
             exit()
 
