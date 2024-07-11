@@ -1,12 +1,15 @@
 from data.classes.Enemy import Enemy
+from data.classes.Hero import Hero
 
 from data.global_vars import enemies
 from data.global_vars import levels
 
-from data.classes.constructor.Elements import TextButton, ImgButton, Text, Img
+from data.classes.constructor.Elements import TextButton, ImgButton, CText, Img
 from data import MusicPlayer
 
 from data.classes.Deck import Deck
+
+from data.global_vars import hero, deck
 
 import pygame
 from random import *
@@ -18,6 +21,7 @@ class Level:
         screen_size = screen_info[2]
 
         w,h = screen_size
+        self.w,self.h = w,h
 
         # self.background = self.enemy_type = self.ways = None
         self.current_level = current_level
@@ -30,6 +34,8 @@ class Level:
         self.enemy_name = get_enemies_by_level[randint(0, len(get_enemies_by_level)-1)]
         self.current_enemy = Enemy(self.enemy_name, screen_info)
 
+        self.player = Hero(hero.hero_class, screen_info)
+
 
         #Creating serfaces to make opportunity to put them on the screen
         self.background = pygame.image.load(background_path)
@@ -37,19 +43,28 @@ class Level:
             self.background.get_size()[0] * screen_scale, self.background.get_size()[1] * screen_scale))
 
 
-        src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
-        self.next_turn = ImgButton(screen_info,src,(w-300,h-300), k=0.2)
+        next_turn_src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
+        self.next_turn = ImgButton(screen_info,next_turn_src,(w-200,h-250), k=0.2)
 
+        input_src = 'data/images/elements/deck/input.png','data/images/elements/deck/input_light.png'
+        self.inp_pos = (100,h-100)
+        self.input = ImgButton(screen_info,input_src,self.inp_pos, k=0.2)
+        # self.input_text = CText(str(deck.cards_input),k=0.4)
+
+        output_src = 'data/images/elements/deck/output.png', 'data/images/elements/deck/output_light.png'
+        self.out_pos = (w-200, h - 100)
+        self.output = ImgButton(screen_info, output_src, self.out_pos, k=0.2)
+        # self.output_text = CText(str(deck.cards_output), k=0.4)
 
         #Start music
         MusicPlayer.play(self.music)
 
         #create a deck
-        self.playerDeck = Deck(screen_info)
+        self.playerDeck = Deck(screen_info, self.current_enemy, self.player)
 
-    def check_win(self,screen_size):
-        self.h = screen_size[1]
-        self.w = screen_size[0]
+    def check_win(self):
+        # self.h = screen_size[1]
+        # self.w = screen_size[0]
         mp = pygame.mouse.get_pos()
         if mp[0]<50 and mp[1]<50:
             return 1
@@ -60,17 +75,25 @@ class Level:
 
 
     #This function draw player, cards, background and enemy every frame
-    def draw(self, screen_info, player):
+    def draw(self, screen_info):
         screen = screen_info[0]
-        # screen_scale = screen_info[1]
-        # screen_size = screen_info[2]
         screen.blit(self.background, (0, 0))
+
         self.current_enemy.draw_enemy()
-        player.draw_hero()
+        self.player.draw_hero()
 
         self.playerDeck.draw()
 
-
         if self.next_turn.draw_check_click():
+            self.current_enemy.make_turn()
+            self.player.make_turn()
+            pass
+        if self.input.draw_check_click():
+            pass
+        if self.output.draw_check_click():
             pass
             # print("OK!")
+        self.input_text = CText(str(deck.cards_input), k=0.4)
+        self.output_text = CText(str(deck.cards_output), k=0.4)
+        self.input_text.draw(screen, (self.inp_pos[0]+self.input.get_w()//4,self.inp_pos[1]+10))
+        self.output_text.draw(screen, (self.out_pos[0] + self.input.get_w() // 4, self.out_pos[1] + 10))

@@ -20,6 +20,7 @@ all_cards_descriptions = {
     0: 'Attack enemy by '+str(all_cards_states[0][1]),
     1: 'Increase your defense by '+str(all_cards_states[1][2])
 }
+
 given_cards_surfaces = []
 given_cards_surfaces_names = []
 for i in range(6):

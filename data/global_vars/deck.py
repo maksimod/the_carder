@@ -1,16 +1,19 @@
 # Card characteristics:
 cards_col = 6
+max_cards_col = 6
+cards_input = 12
+cards_output = 0
 
-# [cost, attack, defense, par1, par2,...,par99]
+# [cost, attack, defense, screen/hero/enemy(0/1/2),par1, par2,...,par99]
 cards = {
-    'attack': [1,6,0,0],
-    'defense': [1,0,5,0]
+    'attack': [1, 6, 0, 0],
+    'defense': [1, 0, 5, 0]
 }
 
 # [description, src]
 cards_view = {
-    'attack': ["Attack enemy by "+str(cards['attack'][1]), 'data/images/cards/bercerk/attack.png'],
-    'defense': ["Increase your defense by "+str(cards['defense'][2]), 'data/images/cards/bercerk/defense.png']
+    'attack': ['Deal ' + str(cards['attack'][1]) + ' damage', 'data/images/cards/bercerk/attack.png'],
+    'defense': ['Gain ' + str(cards['defense'][2]) + ' block', 'data/images/cards/bercerk/defense.png']
 }
 
 current_deck = {
@@ -20,3 +23,4 @@ current_deck = {
 
 current_active_card = 0
 focused_cards = [False for i in range(cards_col)]
+focus_freeze = None

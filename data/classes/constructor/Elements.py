@@ -52,6 +52,18 @@ class Text(Surface):
 
         self.surface = text_font.render(text, False, color)
 
+class CText(Surface):
+    def __init__(self, text, k=1, font=None, color=[255, 255, 255], sysFont = None):
+        if font is None and sysFont is None: sysFont='arial'
+
+        text_font = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * k))
+        if font is not None:
+            text_font = pygame.font.Font(font, int(150 * k))
+        elif sysFont is not None:
+            text_font = pygame.font.SysFont(font, int(150 * k))
+
+        self.surface = text_font.render(text, False, color)
+
 
 class Button:
 
@@ -205,7 +217,9 @@ class ImgButton(Button):
                 self.was_pressed = True
             else:
                 self.surface_light = self.make_size('N', self.surface_light, ex=self.surface, src=self.src_light)
-                if self.was_pressed: return True
+                if self.was_pressed:
+                    self.was_pressed = False
+                    return True
         else:
             self.surface.draw(self.screen, (px, py - bh))
 

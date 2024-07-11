@@ -27,7 +27,7 @@ menu = Menu(screen_info)
 
 from data.classes.Level import Level
 
-from data.classes.Hero import Hero
+from data.global_vars import hero
 
 #hero
 hero_class = 'bercerk'
@@ -41,11 +41,10 @@ while running:
             in_level_passing = True
             # Go to 1st level, create a player
             level_passing = Level(current_level, screen_info)
-            player = Hero(hero_class, screen_info)
     elif in_level_passing:
 
         # If player goes on next level
-        res = level_passing.draw(screen_info,player)
+        res = level_passing.draw(screen_info)
         if (res == 1):
             level_passing = Level(current_level, screen_scale)
             current_level += 1
