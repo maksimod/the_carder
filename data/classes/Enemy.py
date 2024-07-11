@@ -57,7 +57,7 @@ class Enemy:
                     break
         else:
             intention = Img(self.screen_info, enemy_intention_images, k=intention_scale)
-            intention.draw(intentions_pos)
+            intention.draw(self.screen,intentions_pos)
 
     def draw_enemy(self):
         self.screen.blit(self.enemy_surface, enemy_position)
