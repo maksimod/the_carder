@@ -61,17 +61,11 @@ class Hero:
         hero_poison_text_surface = self.hero_poison_text.render(str(self.hero_states[4]) + ' POISON', False,
                                                                 (255, 255, 255))
         self.screen.blit(hero_poison_text_surface, (0, hero_poison_text_surface.get_height() * 1))
-        hero_attack_text_surface = self.hero_poison_text.render(str(self.hero_states[5]) + ' ATK', False,
-                                                                (255, 255, 255))
-        self.screen.blit(hero_attack_text_surface, (0, hero_attack_text_surface.get_height() * 2))
         hero_mp_text_surface = self.hero_mp_text.render(
             str(self.hero_states[3]) + '/' + str(self.hero_max_states[3]) + ' MP', False, (255, 255, 255))
         self.screen.blit(hero_mp_text_surface, (0, hero_mp_text_surface.get_height() * 3))
 
     def update_hero(self):
-        if hero.hero[hero.hero_class][0][0] > 0:
-            self.screen.blit(self.player_surface, hero_position)
-            self.draw_hero_text()
-            self.hero_line.draw(hero.hero[self.hero_class])
-        else:
-            return 'DEAD'
+        self.screen.blit(self.player_surface, hero_position)
+        self.draw_hero_text()
+        self.hero_line.draw(hero.hero[self.hero_class])

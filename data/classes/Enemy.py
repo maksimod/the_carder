@@ -44,6 +44,10 @@ class Enemy:
         #initialize enemy hp df rage line
         self.enemy_line = Line(screen_info, enemy_position, self.enemy_surface.get_size())
 
+
+    def get_hp(self):
+        return enemies[self.enemy_type][0][0]
+
     def clear_values(self):
         enemies[self.enemy_type][0][1] = 0
 
@@ -116,12 +120,9 @@ class Enemy:
         )
 
     def draw_enemy(self):
-        if enemies[self.enemy_type][0][0]>0:
-            self.screen.blit(self.enemy_surface, enemy_position)
-            self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
-            self.draw_enemy_intention()
-        else:
-            return 'DEAD'
+        self.screen.blit(self.enemy_surface, enemy_position)
+        self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
+        self.draw_enemy_intention()
 
     def get_type(self):
         return self.enemy_type

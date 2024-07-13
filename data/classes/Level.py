@@ -27,7 +27,12 @@ class Level:
         self.current_level = current_level
         # Chose current background and enemy with random module
         current_level_parameters = levels.LEVELS[current_level]
-        background_path = current_level_parameters[0][randint(0, len(current_level_parameters[0])-1)]
+        rand_level_back = randint(0, len(current_level_parameters[0])-1)
+        if levels.level_pass_line is not None:
+            rand_level_back = levels.level_pass_line
+        else:
+            levels.level_pass_line = rand_level_back
+        background_path = current_level_parameters[0][rand_level_back]
         self.music = current_level_parameters[1][randint(0, len(current_level_parameters[1])-1)]
 
         get_enemies_by_level = enemies.level_enemy_types[current_level]
@@ -79,11 +84,6 @@ class Level:
         screen = screen_info[0]
         screen.blit(self.background, (0, 0))
 
-        if (self.current_enemy.draw_enemy()): return 'WIN'
-        if self.player.update_hero()=='DEAD': return 'DEFEAT'
-
-        self.playerDeck.draw()
-
         if self.next_turn.draw_check_click():
             self.current_enemy.make_turn()
             self.player.make_turn()
@@ -93,6 +93,20 @@ class Level:
             pass
         if self.output.draw_check_click():
             pass
+
+
+        if hero.hero[hero.hero_class][0][0]<=0:
+            return 'DEFEAT'
+        if enemies.enemies[self.current_enemy.get_type()][0][0]<=0:
+            print("STOP!")
+            return 'WIN'
+
+        self.current_enemy.draw_enemy()
+        self.player.update_hero()
+
+
+        self.playerDeck.draw()
+
             # print("OK!")
         self.input_text = CText(str(deck.cards_input), k=0.4)
         self.output_text = CText(str(deck.cards_output), k=0.4)

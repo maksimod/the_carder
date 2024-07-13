@@ -1,7 +1,7 @@
 #Cards
 menu_text_the_carder_surface = menu_text_the_carder.render('The Carder', False, text_color)
 card_scale = 1.5
-bercerc_attack_card_surface = pygame.image.load('data/images\\cards\\bercerk\\attack.png')
+bercerc_attack_card_surface = pygame.image.load('data/images\\cards\\bercerk\\default.png')
 bercerc_attack_card_surface = pygame.transform.scale(bercerc_attack_card_surface, (bercerc_attack_card_surface.get_size()[0]*screen_scale//2,bercerc_attack_card_surface.get_size()[1]*screen_scale//2))
 bercerc_defense_card_surface = pygame.image.load('data/images\\cards\\bercerk\\defense.png')
 bercerc_defense_card_surface = pygame.transform.scale(bercerc_defense_card_surface, (bercerc_defense_card_surface.get_size()[0]*screen_scale//2,bercerc_defense_card_surface.get_size()[1]*screen_scale//2))

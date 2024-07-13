@@ -2,10 +2,10 @@
 # A - attack, H - heal, B - buff, D - def, C - curse, P - low curse, S - Summon Slave
 # 'enemy_name': [cur_hp,cur_df], [max_hp,max_df] ['intention1','intention2', 'intention3'], img_path]
 enemies = {
-    'guardian' : [[60,0],[60,999],['A9','D10', 'A18'],'data/images/enemies/guardian11.png'],
-    'wizard' : [[50,0],[50,999],['H20','D30', 'A20'],'data/images/enemies/wizard11.png'],
-    'snakes' : [[50,0],[50,999],['P4','H20'],'data/images/enemies/snakes11.png'],
-    'joker' : [[40,0],[40,999],['S99','H15', 'A10'], 'data/images/enemies/joker11.png']
+    'guardian' : [[60,0],[60,999],['A9','D15', 'A18'],'data/images/enemies/guardian11.png'],
+    'wizard' : [[50,0],[50,999],['A20', 'D12', 'A13','H18'],'data/images/enemies/wizard11.png'],
+    'snakes' : [[50,0],[50,999],['P5','H10'],'data/images/enemies/snakes11.png'],
+    'joker' : [[40,0],[40,999],['S99','A10', 'D15'], 'data/images/enemies/joker11.png']
 }
 
 # [-player_hp, +enemy_hp, +enemy_df, +player_poison, +slave ...]

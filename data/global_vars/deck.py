@@ -1,8 +1,8 @@
 from random import shuffle
 
 # Card characteristics:
-cards_col = 6
-max_cards_col = 6
+hand_cards_col = 6
+hand_max_cards_col = 6
 
 # [cost, attack, defense, screen/hero/enemy(0/1/2),par1, par2,...,par99]
 cards = {
@@ -27,6 +27,12 @@ current_deck = {
     'attack': 6,
     'defense': 6
 }
+
+def get_deck_cards_col():
+    sm = 0
+    for el in current_deck.keys():
+        sm+=current_deck[el]
+    return sm
 
 current_active_card = 0
 focused_cards = [False for i in range(len(input))]

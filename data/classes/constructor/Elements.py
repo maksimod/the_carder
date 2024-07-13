@@ -42,6 +42,41 @@ class Img(Surface):
         self.surface = pygame.image.load(src)
 
 
+class CardImg(Img):
+    def __init__(self, screen_info,default_src, img_src, k=1):
+        self.screen = screen_info[0]
+        self.screen_scale = screen_info[1]
+
+        img_scale = 1
+        self.img_surface = pygame.image.load(img_src)
+        self.img_surface = pygame.transform.scale(self.img_surface,
+                                              (self.img_surface.get_width() * k * self.screen_scale * img_scale,
+                                               self.img_surface.get_height() * k * self.screen_scale * img_scale
+                                               )
+                                              )
+        self.surface = pygame.image.load(default_src)
+        self.surface = pygame.transform.scale(self.surface,
+                                              (self.surface.get_width() * k * self.screen_scale,
+                                               self.surface.get_height() * k * self.screen_scale
+                                               )
+                                              )
+
+    def draw(self, screen, pos):
+        screen.blit(self.surface, pos)
+        screen.blit(self.img_surface, pos)
+
+    def scale(self, ex, k):
+        self.surface = pygame.transform.scale(self.surface,
+                                              (ex.get_width() * k, ex.get_height() * k)
+                                              )
+        # img_scale = 1
+        self.img_surface = pygame.transform.scale(self.img_surface,
+                                              (self.img_surface.get_width() * k, self.img_surface.get_height() * k)
+                                              )
+
+
+
+
 class Text(Surface):
     def __init__(self, text, k=1, font=None, color=[255, 255, 255], sysFont = None):
         text_font = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * k))
@@ -221,7 +256,9 @@ class ImgButton(Button):
                     self.was_pressed = False
                     return True
         else:
+            self.surface_light = self.make_size('N', self.surface_light, ex=self.surface, src=self.src_light)
             self.surface.draw(self.screen, (px, py - bh))
+            self.was_pressed = False
 
         if hotkey is not None:
             if keyboard.is_pressed(hotkey):

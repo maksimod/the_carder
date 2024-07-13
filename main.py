@@ -21,8 +21,11 @@ current_level = 1
 screen_info = [screen, screen_scale, screen_size]
 
 pygame.init()
-from data.classes.Menu import Menu
-menu = Menu(screen_info)
+from data.classes.MainMenu import Menu
+from data.classes.HeroChoseMenu import HeroChoseMenu
+
+# menu = Menu(screen_info)
+menu = HeroChoseMenu(screen_info)
 
 from data.classes.Level import Level
 from data.global_vars import deck,hero
@@ -58,11 +61,21 @@ while running:
             deck.input = [['attack','defense'][i%2] for i in range(12)]
             shuffle(deck.input)
             deck.output = []
+            deck.cards_input = deck.get_deck_cards_col()
+            deck.cards_output = 0
 
             in_menu = True
             in_level_passing = False
             menu = Menu(screen_info)
         elif (res == 'WIN'):
+            print("WIN!!!")
+
+            deck.input = [['attack','defense'][i%2] for i in range(12)]
+            shuffle(deck.input)
+            deck.output = []
+            deck.cards_input = deck.get_deck_cards_col()
+            deck.cards_output = 0
+
             level_passing = Level(current_level, screen_info)
             current_level += 1
 

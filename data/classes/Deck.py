@@ -4,7 +4,7 @@ import keyboard
 
 import pygame
 
-from data.classes.constructor.Elements import Img, CText
+from data.classes.constructor.Elements import CardImg, CText
 
 from data.global_vars import deck, hero, enemies
 
@@ -19,10 +19,10 @@ class Deck:
     def __init__(self, screen_info, enemy, player):
         self.enemy,self.player = enemy,player
 
-        if deck.cards_col<=6:
+        if deck.hand_cards_col<=6:
             k = 0.4
         else:
-            k = 0.4 - (deck.cards_col-6)*0.03
+            k = 0.4 - (deck.hand_cards_col-6)*0.03
 
         self.screen = screen_info[0]
         self.screen_scale = screen_info[1]
@@ -33,7 +33,7 @@ class Deck:
             deck.input[i] = Card(screen_info, deck.input[i], k, i)
 
         self.cards = []
-        for i in range(deck.cards_col):
+        for i in range(deck.hand_cards_col):
             self.cards.append(deck.input[0])
             deck.input.pop(0)
             deck.cards_input-=1
@@ -44,8 +44,7 @@ class Deck:
             del self.cards[0]
             deck.cards_output+=1
 
-        for i in range(deck.max_cards_col):
-            print('!!',deck.max_cards_col,i)
+        for i in range(deck.hand_max_cards_col):
             if deck.input:
                 self.cards.append(deck.input[0])
                 deck.input.pop(0)
@@ -60,7 +59,7 @@ class Deck:
                 deck.input.pop(0)
                 deck.cards_input-=1
 
-        deck.cards_col = deck.max_cards_col
+        deck.hand_cards_col = deck.hand_max_cards_col
 
         for i in range(len(self.cards)):
             self.cards[i].set_index(i)
@@ -89,17 +88,18 @@ class Deck:
         # sleep(99)
         deck.output.append(card)
         deck.cards_output+=1
+
         return True
 
     def draw(self):
         cards = self.cards
-        for i in range(deck.cards_col):
-            card_pos_x = self.screen_size[0] // 2 - (cards[0].get_width() * deck.cards_col) // 2 + i * cards[0].get_width()
+        for i in range(deck.hand_cards_col):
+            card_pos_x = self.screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[0].get_width()
             card_pos_y = self.screen_size[1] - cards[0].get_height()
             if cards[i].live(self.screen, (card_pos_x,card_pos_y)) == True:
                 if self.play_card(cards[i].get_card(), cards[i]):
                     del cards[i]
-                    deck.cards_col -= 1
+                    deck.hand_cards_col -= 1
                     break
                 # self.play_card(cards[i].get_card())
 
@@ -130,13 +130,18 @@ class Card(Surface):
         self.was_pressed_up = False
 
         self.card_src = card_src
+
+
         img = self.collect_src(card_src)
+        # print(img)
+        # sleep(99)
+        default_src = 'data/images/cards/'+hero.hero_class+'/default.png'
 
         self.k = k
-        self.surface = Img(screen_info, img)
+        self.surface = CardImg(screen_info, default_src,img)
         self.surface.scale(self.surface, k)
 
-        self.big = Img(screen_info, img)
+        self.big = CardImg(screen_info, default_src, img)
         self.big.scale(self.big, k * self.big_card_k)
 
     @staticmethod
