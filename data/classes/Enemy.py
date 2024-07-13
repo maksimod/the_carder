@@ -4,10 +4,6 @@ from data.global_vars.enemies import *
 
 from data.classes.constructor.Lines_constructor import Line
 
-# enemyes
-enemy_scale = 0.3
-enemy_position = (1150, 350)
-
 from time import *
 
 from data.global_vars import hero
@@ -33,16 +29,27 @@ class Enemy:
         self.enemy_max_hp = enemies[self.enemy_type][1][0]
         self.enemy_intentions = enemies[self.enemy_type][1]
 
+        self.enemy_scale = 0.3
+        if 'AI' in enemies[self.enemy_type][3]:
+            self.enemy_scale = 0.4
+
         self.enemy_surface = pygame.image.load(enemies[enemy_type][3])
         self.enemy_surface = pygame.transform.scale(self.enemy_surface, (
-            self.enemy_surface.get_size()[0] * self.screen_scale * enemy_scale,
-            self.enemy_surface.get_size()[1] * self.screen_scale * enemy_scale))
+            self.enemy_surface.get_size()[0] * self.screen_scale * self.enemy_scale,
+            self.enemy_surface.get_size()[1] * self.screen_scale * self.enemy_scale))
 
         self.enemy_size = self.enemy_surface.get_size()
         self.enemy_type = enemy_type
 
+
+        self.enemy_position = (1150, 350)
+
         #initialize enemy hp df rage line
-        self.enemy_line = Line(screen_info, enemy_position, self.enemy_surface.get_size())
+        self.enemy_line = Line(screen_info, self.enemy_position, self.enemy_surface.get_size())
+
+        if 'AI' in enemies[self.enemy_type][3]:
+            pass
+            self.enemy_position = [self.enemy_position[0]+120,self.enemy_position[1]]
 
 
     def get_hp(self):
@@ -60,20 +67,39 @@ class Enemy:
 
         current_intention = enemies[self.enemy_type][2][self.curent_intention_index]
 
-        if current_intention[0]=='A':
-            attack = int(current_intention[1:])
-            if hero.hero[hero.hero_class][0][1] <= 0:
-                hero.hero[hero.hero_class][0][0] -= attack
-            elif hero.hero[hero.hero_class][0][1] >= attack:
-                hero.hero[hero.hero_class][0][1] -= attack
+        intentions_list = []
+        start_ind = 0
+        end_ind = -1
+        if '&' in current_intention:
+            for i in range(len(current_intention)):
+                if current_intention[i] == '&':
+                    end_ind = i
+                    intentions_list.append(current_intention[start_ind:end_ind])
+                    start_ind = i+1
+        intentions_list.append(current_intention[start_ind:])
+
+        for current_intention in intentions_list:
+            if current_intention[0]=='A':
+                attack = int(current_intention[1:])
+                if hero.hero[hero.hero_class][0][1] <= 0:
+                    hero.hero[hero.hero_class][0][0] -= attack
+                elif hero.hero[hero.hero_class][0][1] >= attack:
+                    hero.hero[hero.hero_class][0][1] -= attack
+                else:
+                    attack -= hero.hero[hero.hero_class][0][1]
+                    hero.hero[hero.hero_class][0][1] = 0
+                    hero.hero[hero.hero_class][0][0] -= attack
             else:
-                attack -= hero.hero[hero.hero_class][0][1]
-                hero.hero[hero.hero_class][0][1] = 0
-                hero.hero[hero.hero_class][0][0] -= attack
-        else:
-            int_text = intention_actions[current_intention[0]][0]
-            command = str(int_text[:-1]) + str(int_text[-1]) + '=' + str(current_intention[1:])
-            exec(command)
+                int_text = intention_actions[current_intention[0]][0]
+
+                #if H/D/P/etc. - intent_val_strt_indx=1; if C/L/P/B/etc. - intent_val_strt_indx=1
+                for i in range(len(str(current_intention))):
+                    if str(current_intention)[i] in ['1','2','3','4','5','6','7','8','9','0']:
+                        intent_val_strt_indx = i
+                        break
+
+                command = str(int_text[:-1]) + str(int_text[-1]) + '=' + str(current_intention[intent_val_strt_indx:])
+                exec(command)
 
         self.check_impossible_values()
 
@@ -120,22 +146,9 @@ class Enemy:
         )
 
     def draw_enemy(self):
-        self.screen.blit(self.enemy_surface, enemy_position)
+        self.screen.blit(self.enemy_surface, self.enemy_position)
         self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
         self.draw_enemy_intention()
 
     def get_type(self):
         return self.enemy_type
-
-
-# def enemy_turn(current_enemy_intention):
-#     # down to zero
-#     if current_enemy_intention + 1 > len(enemy_intentions_dict[rand_1_enemy_number]):
-#         current_enemy_intention = 0
-#     current_intention = enemy_intentions_dict[rand_1_enemy_number][current_enemy_intention]
-#     if current_intention[0] == 'A':
-#         enemy_dict[enemy_type][0] -= int(current_intention[1:])
-#         pass
-#
-#     current_enemy_intention += 1
-#     return current_enemy_intention

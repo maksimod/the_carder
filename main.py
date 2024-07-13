@@ -17,7 +17,7 @@ running = True
 in_menu = True
 in_level_passing = False
 
-current_level = 1
+current_level = 3
 screen_info = [screen, screen_scale, screen_size]
 
 pygame.init()
@@ -35,6 +35,24 @@ from random import shuffle
 #hero
 hero_class = 'bercerk'
 
+def restore_deck_parameters():
+    deck.input = [['attack', 'defense'][i % 2] for i in range(12)]
+    shuffle(deck.input)
+    deck.output = []
+    deck.cards_input = deck.get_deck_cards_col()
+    deck.cards_output = 0
+    deck.hand_cards_col = deck.hand_max_cards_col
+
+def restore_hero_parameters():
+    hero.hero[hero.hero_class][0][0] = hero.hero[hero.hero_class][1][0]
+    hero.hero[hero.hero_class][0][1] = 0
+    for i in range(len(hero.hero_debuffs)):
+        hero.hero[hero.hero_class][0][-1][i] = 0
+
+def restore_parameters():
+    restore_deck_parameters()
+    restore_hero_parameters()
+
 while running:
 # Меню
     if in_menu:
@@ -50,34 +68,16 @@ while running:
         # If player goes on next level
         res = level_passing.draw(screen_info)
         if res == 'DEFEAT':
-            # running = False
-            # break
-            hero.hero[hero.hero_class][0][0] = hero.hero[hero.hero_class][1][0]
-            hero.hero[hero.hero_class][0][1] = 0
-            hero.hero[hero.hero_class][0][2] = hero.hero[hero.hero_class][1][2]
-            hero.hero[hero.hero_class][0][3] = hero.hero[hero.hero_class][1][3]
-            hero.hero[hero.hero_class][0][4] = hero.hero[hero.hero_class][1][4]
-
-            deck.input = [['attack','defense'][i%2] for i in range(12)]
-            shuffle(deck.input)
-            deck.output = []
-            deck.cards_input = deck.get_deck_cards_col()
-            deck.cards_output = 0
+            restore_parameters()
 
             in_menu = True
             in_level_passing = False
             menu = Menu(screen_info)
         elif (res == 'WIN'):
-            print("WIN!!!")
+            restore_parameters()
 
-            deck.input = [['attack','defense'][i%2] for i in range(12)]
-            shuffle(deck.input)
-            deck.output = []
-            deck.cards_input = deck.get_deck_cards_col()
-            deck.cards_output = 0
-
-            level_passing = Level(current_level, screen_info)
             current_level += 1
+            level_passing = Level(current_level, screen_info)
 
 
     # Updating display, control fps

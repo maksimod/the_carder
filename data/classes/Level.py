@@ -99,6 +99,7 @@ class Level:
             return 'DEFEAT'
         if enemies.enemies[self.current_enemy.get_type()][0][0]<=0:
             print("STOP!")
+            del self.playerDeck
             return 'WIN'
 
         self.current_enemy.draw_enemy()

@@ -35,34 +35,36 @@ class Hero:
         self.hero_size = self.player_surface.get_size()
         self.hero_class = hero_class
 
-        self.hero_states = hero.hero[self.hero_class][0]
-        self.hero_max_states = hero.hero[self.hero_class][1]
+        self.hero_hp_mp = hero.hero[self.hero_class][0]
+        self.hero_max_hp_mp = hero.hero[self.hero_class][1]
 
-        #initialize hero hp df rage line
+        # initialize hero hp df rage line
         self.hero_line = Line(screen_info, hero_position, self.player_surface.get_size())
+
+        self.hero_debuffs = hero.hero[hero.hero_class][0][-1]
+        self.deb_index = hero.debuffs_indexes
 
     def make_turn(self):
         # self.current_mp = self.max_mp
-        hero.hero[hero.hero_class][0][3] = hero.hero[hero.hero_class][1][3]
+        hero.hero[hero.hero_class][0][3] = hero.hero[hero.hero_class][1][1]
 
         if self.can_poison:
             hero.hero[hero.hero_class][0][0] -= self.previous_poison
-            self.previous_poison = hero.hero[hero.hero_class][0][4]
-        if (hero.hero[hero.hero_class][0][4]) and (self.poison_first_time):
+            self.previous_poison = self.hero_debuffs[self.deb_index['poison']]
+        if (self.hero_debuffs[self.deb_index['poison']]) and (self.poison_first_time):
             self.poison_first_time = False
             self.can_poison = True
-            self.previous_poison = hero.hero[hero.hero_class][0][4]
-
+            self.previous_poison = self.hero_debuffs[self.deb_index['poison']]
 
         hero.hero[hero.hero_class][0][1] = 0
 
-
     def draw_hero_text(self):
-        hero_poison_text_surface = self.hero_poison_text.render(str(self.hero_states[4]) + ' POISON', False,
-                                                                (255, 255, 255))
+        hero_poison_text_surface = self.hero_poison_text.render(
+            str(self.hero_debuffs[self.deb_index['poison']]) + ' POISON', False,
+            (255, 255, 255))
         self.screen.blit(hero_poison_text_surface, (0, hero_poison_text_surface.get_height() * 1))
         hero_mp_text_surface = self.hero_mp_text.render(
-            str(self.hero_states[3]) + '/' + str(self.hero_max_states[3]) + ' MP', False, (255, 255, 255))
+            str(self.hero_hp_mp[3]) + '/' + str(self.hero_max_hp_mp[1]) + ' MP', False, (255, 255, 255))
         self.screen.blit(hero_mp_text_surface, (0, hero_mp_text_surface.get_height() * 3))
 
     def update_hero(self):
