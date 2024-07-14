@@ -26,7 +26,7 @@ buffs_indexes = {
     'B': 1
 }
 
-# 'enemy_name': [cur_hp,cur_df, ], [max_hp,max_df] ['intention1','intention2', 'intention3'], img_path]
+# 'enemy_name': [cur_hp,cur_df, [buffs], [debuffs]], [max_hp] ['intention1','intention2', 'intention3'], img_path]
 enemies = {
     'guardian' : [[60,0, enemy_buffs, enemy_debuffs],[60],['A9','D15', 'A18'],'data/images/enemies/guardian11.png'],
     'wizard' : [[50,0,enemy_buffs, enemy_debuffs],[50],['A20', 'D12', 'A13','H18'],'data/images/enemies/wizard11.png'],
@@ -38,7 +38,7 @@ enemies = {
     'flowers2': [[40, 0, enemy_buffs, enemy_debuffs], [40], ['BS4', 'A4','LW2', 'A9'], 'data/images/enemies/AI/flowers2.png'],
 
 
-    'buff_check': [[40, 0, enemy_buffs, enemy_debuffs], [40], ['BS4', 'A4','LW2', 'A9'], 'data/images/enemies/AI/flowers2.png'],
+    'buff_check': [[40, 0, enemy_buffs, enemy_debuffs], [40], ['A4','BS4'], 'data/images/enemies/AI/flowers2.png'],
 }
 
 # [-player_hp, +enemy_hp, +enemy_df, +player_poison, +slave ...]

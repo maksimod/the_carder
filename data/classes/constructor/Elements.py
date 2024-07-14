@@ -44,10 +44,16 @@ class Img(Surface):
 
 class CardImg(Img):
     def __init__(self, screen_info,default_src, img_src, k=1):
+        print(img_src)
+
         self.screen = screen_info[0]
         self.screen_scale = screen_info[1]
 
-        img_scale = 1
+        self.imageIsAI = False
+        if 'AI' in img_src: self.imageIsAI = True
+
+        if self.imageIsAI: img_scale = 0.3
+        else: img_scale = 1
         self.img_surface = pygame.image.load(img_src)
         self.img_surface = pygame.transform.scale(self.img_surface,
                                               (self.img_surface.get_width() * k * self.screen_scale * img_scale,
@@ -62,8 +68,9 @@ class CardImg(Img):
                                               )
 
     def draw(self, screen, pos):
+        if self.imageIsAI: screen.blit(self.img_surface, [pos[0]+self.surface.get_width()//4, pos[1]+self.surface.get_height()//6.5])
+        else: screen.blit(self.img_surface, pos)
         screen.blit(self.surface, pos)
-        screen.blit(self.img_surface, pos)
 
     def scale(self, ex, k):
         self.surface = pygame.transform.scale(self.surface,

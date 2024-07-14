@@ -52,6 +52,9 @@ class Enemy:
             self.enemy_position = [self.enemy_position[0]+120,self.enemy_position[1]]
 
 
+    def get_type(self):
+        return self.enemy_type
+
     def get_hp(self):
         return enemies[self.enemy_type][0][0]
 
@@ -81,6 +84,9 @@ class Enemy:
         for current_intention in intentions_list:
             if current_intention[0]=='A':
                 attack = int(current_intention[1:])
+                # Add strength to attack
+                attack+=enemies[self.enemy_type][0][-2][buffs_indexes['S']]
+
                 if hero.hero[hero.hero_class][0][1] <= 0:
                     hero.hero[hero.hero_class][0][0] -= attack
                 elif hero.hero[hero.hero_class][0][1] >= attack:
@@ -116,7 +122,14 @@ class Enemy:
 
         intention_scale = 0.3
 
-        self.intention_text = Text(current_intention[1:],sysFont='arial', k=0.5)
+        value_amount = ''
+        # current intention = A/D/H/P/etc.
+        if current_intention[1] in ['1','2','3','4','5','6','7','8','9','0']:
+            value_amount = int(current_intention[1:])
+            if current_intention[0] == 'A':
+                value_amount += enemies[self.enemy_type][0][-2][buffs_indexes['S']]
+
+        self.intention_text = Text(str(value_amount),sysFont='arial', k=0.5)
 
         if (len(enemy_intention_images)>1) and (type(enemy_intention_images) is not str):
             for el in enemy_intention_images.keys():

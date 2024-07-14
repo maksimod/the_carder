@@ -3,7 +3,7 @@ import pygame
 
 class Line:
     def line_scale(self, surface, cstate, mstate):
-        return (self.screen_scale / 1.5 * surface.get_width() * cstate / mstate - 9,
+        return (self.screen_scale / 1.5 * surface.get_width() * cstate / mstate,
                 self.screen_scale / 1.5 * surface.get_height())
 
     # pars(parameters) = [hp,df,rage]
@@ -45,7 +45,13 @@ class Line:
         self.hero_df_text_h = self.hero_df_text_surface.get_height()
 
         hp_line_surface = pygame.image.load('data/images\\elements\\hp_def\\hp_line.png')
-        hp_line_surface = pygame.transform.scale(hp_line_surface, self.line_scale(hp_line_surface, chp, mhp))
+        try:
+            pass
+            # hp_line_surface = pygame.transform.scale(hp_line_surface, self.line_scale(hp_line_surface, chp, mhp))
+            # hp_line_surface = pygame.transform.scale(hp_line_surface, self.line_scale(hp_line_surface, chp, mhp))
+        except:
+            pass
+            # return None
 
         self.hp_trace_surface = pygame.image.load('data/images\\elements\\hp_def\\hp_tracing.png')
         self.hp_trace_w = self.hp_trace_surface.get_width()
@@ -56,12 +62,8 @@ class Line:
         else:
             lines_position = (aim_pos[0] + aim_size[1] // 4, aim_pos[1] - 50)
 
-        # prepare vars for draw function
-        self.hp_line_surface = hp_line_surface
-        self.lines_position = lines_position
-
-        self.screen.blit(self.hp_line_surface, self.lines_position)
-        self.screen.blit(self.hp_trace_surface, self.lines_position)
+        self.screen.blit(hp_line_surface, lines_position, (0,0,hp_line_surface.get_width() * chp / mhp,hp_line_surface.get_height()))
+        self.screen.blit(self.hp_trace_surface, lines_position)
 
         if self.df > 0:
             shield_icon_surface = pygame.image.load('data/images\\elements\\hp_def\\shield_icon.png')
@@ -71,20 +73,18 @@ class Line:
 
             # if not mirror:
             shield_icon_pos = (
-            self.lines_position[0] + self.hp_trace_surface.get_width() - shield_icon_surface.get_width() // 2,
-            self.lines_position[1])
-            # else:
-            #     shield_icon_pos = (
-            #     self.lines_position[0] + self.hp_line_surface.get_width() - shield_icon_surface.get_width() // 2,
-            #     self.lines_position[1])
+            lines_position[0] + self.hp_trace_surface.get_width() - shield_icon_surface.get_width() // 2,
+            lines_position[1])
             df_text_pos = (shield_icon_pos[0]+shield_icon_h-self.hero_df_text_surface.get_width()*1.2, shield_icon_pos[1] + self.hero_df_text_h//2.5)
 
-            self.screen.blit(shield_line_surface, (self.lines_position[0], self.lines_position[1]))
-            self.screen.blit(df_trace_surface, (self.lines_position[0], self.lines_position[1]))
+            self.screen.blit(shield_line_surface, (lines_position[0], lines_position[1]))
+            self.screen.blit(df_trace_surface, (lines_position[0], lines_position[1]))
             self.screen.blit(shield_icon_surface, shield_icon_pos)
             self.screen.blit(self.hero_df_text_surface, df_text_pos)
 
 
         self.screen.blit(self.hero_hp_text_surface,
-                         (self.lines_position[0] + self.hp_trace_w // 2 - self.hero_hp_text_w // 2,
-                          self.lines_position[1] + self.hp_trace_h // 2 - self.hero_hp_text_h // 2))
+                         (lines_position[0] + self.hp_trace_w // 2 - self.hero_hp_text_w // 2,
+                          lines_position[1] + self.hp_trace_h // 2 - self.hero_hp_text_h // 2))
+
+        self.lines_position = lines_position

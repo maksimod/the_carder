@@ -39,7 +39,7 @@ class HeroChoseMenu:
 
         # Actions
         # self.create_clouds()
-        MusicPlayer.play('data/music/lev0.mp3')
+        MusicPlayer.play('data/music/heroChose.mp3')
 
     def mouse_check(self):
         if self.bercerk.draw_check_click():

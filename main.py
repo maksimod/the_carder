@@ -14,7 +14,11 @@ clock = pygame.time.Clock()
 level_passing = None
 
 running = True
+
 in_menu = True
+in_chose_hero = False
+in_card_chose = False
+
 in_level_passing = False
 
 current_level = 3
@@ -23,35 +27,16 @@ screen_info = [screen, screen_scale, screen_size]
 pygame.init()
 from data.classes.MainMenu import Menu
 from data.classes.HeroChoseMenu import HeroChoseMenu
+from data.classes.CardChooseMenu import CardChooseMenu
 
 # menu = Menu(screen_info)
-menu = HeroChoseMenu(screen_info)
+
+menu = CardChooseMenu(screen_info)
 
 from data.classes.Level import Level
-from data.global_vars import deck,hero
-
-from random import shuffle
 
 #hero
 hero_class = 'bercerk'
-
-def restore_deck_parameters():
-    deck.input = [['attack', 'defense'][i % 2] for i in range(12)]
-    shuffle(deck.input)
-    deck.output = []
-    deck.cards_input = deck.get_deck_cards_col()
-    deck.cards_output = 0
-    deck.hand_cards_col = deck.hand_max_cards_col
-
-def restore_hero_parameters():
-    hero.hero[hero.hero_class][0][0] = hero.hero[hero.hero_class][1][0]
-    hero.hero[hero.hero_class][0][1] = 0
-    for i in range(len(hero.hero_debuffs)):
-        hero.hero[hero.hero_class][0][-1][i] = 0
-
-def restore_parameters():
-    restore_deck_parameters()
-    restore_hero_parameters()
 
 while running:
 # Меню
@@ -59,25 +44,42 @@ while running:
         menu.draw(screen)
         if menu.player_action_check():
             in_menu = False
+            in_chose_hero = True
+            hero_chose_menu = HeroChoseMenu(screen_info)
+            del menu
+    elif in_chose_hero:
+        hero_chose_menu.draw(screen)
+        if hero_chose_menu.player_action_check():
+            in_chose_hero = False
             in_level_passing = True
             # Go to 1st level, create a player
             level_passing = Level(current_level, screen_info)
-            del menu
-    elif in_level_passing:
+            del hero_chose_menu
+    elif in_card_chose:
+        card_chose_menu = CardChooseMenu(screen_info)
+        if hero_chose_menu.player_action_check():
+            in_chose_hero = False
+            in_level_passing = True
+            # Go to 1st level, create a player
+            level_passing = Level(current_level, screen_info)
+            del hero_chose_menu
+        level_passing = Level(current_level, screen_info)
 
+
+    elif in_level_passing:
         # If player goes on next level
         res = level_passing.draw(screen_info)
         if res == 'DEFEAT':
-            restore_parameters()
-
             in_menu = True
             in_level_passing = False
             menu = Menu(screen_info)
         elif (res == 'WIN'):
-            restore_parameters()
-
             current_level += 1
-            level_passing = Level(current_level, screen_info)
+
+            in_level_passing = False
+            in_card_chose = True
+
+            card_chose_menu = CardChooseMenu(screen_info)
 
 
     # Updating display, control fps

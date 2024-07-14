@@ -1,29 +1,54 @@
 from data.classes.Enemy import Enemy
 from data.classes.Hero import Hero
 
-from data.global_vars import enemies
 from data.global_vars import levels
 
-from data.classes.constructor.Elements import TextButton, ImgButton, CText, Img
+from data.classes.constructor.Elements import ImgButton, CText
 from data import MusicPlayer
 
 from data.classes.Deck import Deck
 
-from data.global_vars import hero, deck
+from data.global_vars import hero, deck, enemies
 
 import pygame
 from random import *
 
+
+def restore_deck_parameters():
+    deck.input = [['attack', 'defense'][i % 2] for i in range(12)]
+    shuffle(deck.input)
+    deck.output = []
+    deck.cards_input = deck.get_deck_cards_col()
+    deck.cards_output = 0
+    deck.hand_cards_col = deck.hand_max_cards_col
+
+def restore_hero_parameters():
+    hero.hero[hero.hero_class][0][0] = hero.hero[hero.hero_class][1][0]
+    hero.hero[hero.hero_class][0][1] = 0
+    for i in range(len(hero.hero_debuffs)): hero.hero[hero.hero_class][0][-1][i] = 0
+    for i in range(len(hero.hero_buffs)): hero.hero[hero.hero_class][0][-2][i] = 0
+
+def restore_enemy_parameters(type):
+    #restore hp
+    enemies.enemies[type][0][0] = enemies.enemies[type][1][0]
+    #restore buffs/debuffs
+    for i in range(len(enemies.enemy_debuffs)): enemies.enemies[type][0][-1][i] = 0
+    for i in range(len(enemies.enemy_buffs)): enemies.enemies[type][0][-2][i] = 0
+
+
+def restore_parameters(enemy_type):
+    restore_deck_parameters()
+    restore_hero_parameters()
+    restore_enemy_parameters(enemy_type)
+
 class Level:
     def __init__(self,current_level, screen_info):
-        screen = screen_info[0]
         screen_scale = screen_info[1]
         screen_size = screen_info[2]
 
         w,h = screen_size
         self.w,self.h = w,h
 
-        # self.background = self.enemy_type = self.ways = None
         self.current_level = current_level
         # Chose current background and enemy with random module
         current_level_parameters = levels.LEVELS[current_level]
@@ -41,12 +66,10 @@ class Level:
 
         self.player = Hero(hero.hero_class, screen_info)
 
-
         #Creating serfaces to make opportunity to put them on the screen
         self.background = pygame.image.load(background_path)
         self.background = pygame.transform.scale(self.background, (
             self.background.get_size()[0] * screen_scale, self.background.get_size()[1] * screen_scale))
-
 
         next_turn_src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
         self.next_turn = ImgButton(screen_info,next_turn_src,(w-200,h-250), k=0.2)
@@ -68,8 +91,6 @@ class Level:
         self.playerDeck = Deck(screen_info, self.current_enemy, self.player)
 
     def check_win(self):
-        # self.h = screen_size[1]
-        # self.w = screen_size[0]
         mp = pygame.mouse.get_pos()
         if mp[0]<50 and mp[1]<50:
             return 1
@@ -95,10 +116,13 @@ class Level:
             pass
 
 
+        print(hero.hero[hero.hero_class][0][0])
         if hero.hero[hero.hero_class][0][0]<=0:
+            restore_parameters(self.current_enemy.get_type())
+            del self.playerDeck
             return 'DEFEAT'
         if enemies.enemies[self.current_enemy.get_type()][0][0]<=0:
-            print("STOP!")
+            restore_parameters(self.current_enemy.get_type())
             del self.playerDeck
             return 'WIN'
 

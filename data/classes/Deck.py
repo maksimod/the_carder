@@ -63,29 +63,35 @@ class Deck:
 
         for i in range(len(self.cards)):
             self.cards[i].set_index(i)
-        # print(self.cards)
-
-        # sleep(99)
 
     def play_card(self, src, card):
         cost = deck.cards[src][0]
-        attack = deck.cards[src][1]
-        defence = deck.cards[src][2]
+
+        #Check for elements and make actions
+        for action in deck.cards[src][1:]:
+            if action[0] == 'A':
+                #ATTACK ENEMY
+                if action[1] == 'A':
+                    attack = int(action[2:])
+                    if enemies.enemies[self.enemy.get_type()][0][1] <= 0:
+                        enemies.enemies[self.enemy.get_type()][0][0] -= attack
+                    else:
+                        if enemies.enemies[self.enemy.get_type()][0][1] - attack >= 0:
+                            enemies.enemies[self.enemy.get_type()][0][1] -= attack
+                        else:
+                            attack -= enemies.enemies[self.enemy.get_type()][0][1]
+                            enemies.enemies[self.enemy.get_type()][0][1] = 0
+                            enemies.enemies[self.enemy.get_type()][0][0] -= attack
+                # elif
+            elif action[0] == 'P':
+                if action[1] == 'D':
+                    defence = int(action[2:])
+                    hero.hero[hero.hero_class][0][1] += defence
+            else:
+                raise NameError('You did not add E support already')
 
         hero.hero[hero.hero_class][0][3] -= cost
-        if enemies.enemies[self.enemy.get_type()][0][1]<=0:
-            enemies.enemies[self.enemy.get_type()][0][0]-=attack
-        else:
-            if enemies.enemies[self.enemy.get_type()][0][1]-attack>=0:
-                enemies.enemies[self.enemy.get_type()][0][1] -= attack
-            else:
-                attack -= enemies.enemies[self.enemy.get_type()][0][1]
-                enemies.enemies[self.enemy.get_type()][0][1]=0
-                enemies.enemies[self.enemy.get_type()][0][0] -= attack
-        hero.hero[hero.hero_class][0][1]+=defence
 
-        # print(card)
-        # sleep(99)
         deck.output.append(card)
         deck.cards_output+=1
 
@@ -133,8 +139,6 @@ class Card(Surface):
 
 
         img = self.collect_src(card_src)
-        # print(img)
-        # sleep(99)
         default_src = 'data/images/cards/'+hero.hero_class+'/default.png'
 
         self.k = k
@@ -252,7 +256,13 @@ class Card(Surface):
                 deck.focus_freeze = None
             else:
                 deck.focus_freeze = None
-                if deck.cards[self.card_src][3] == 0:
+                #check that if card apply to one of all enemies it focused at one of the enemy
+                flag = True
+                for el in deck.cards[self.card_src][1:]:
+                    if 'E' in el:
+                        flag = False
+                        break
+                if flag:
                     if int(self.cost)<=hero.hero[hero.hero_class][0][3]:
                         return 'Play'
 
@@ -281,8 +291,10 @@ class Card(Surface):
         deck.focused_cards[self.index] = self.focus
 
         if self.focus:
+            pass
             self.big.draw(self.screen, (pxb, pyb))
         else:
+            pass
             self.surface.draw(self.screen, (pxs, pys))
 
         self.pxb, self.pyb = pxb, pyb
