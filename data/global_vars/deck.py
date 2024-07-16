@@ -40,26 +40,34 @@ cards = {
     'attack': [1,'AA6'],
     'defense': [1,'PD5'],
     'crushHead': [2, 'AA9', 'ALV2']
-    # 'attack': [1, 6, 0, 0, ['~0','~0','~0','~0','~0','~0'], ['~0','~0','~0'], ['~0','~0','~0','~0','~0','~0'], [0,po
-    #                                                                                                             0,0]],
-    # 'defense': [1, 0, 5, 0, [0,0,0,0,0,0], [0,0,0], [0,0,0,0,0,0], [0,0,0]],
-    # 'crushHead': [2, 9, 0, 0, [2,0,0,0,0,0], [0,0,0], [0,0,0,0,0,0], [0,0,0]],
-    # 'evilDeal': [1, 0, 0, 0, [2,0,0,0,0,0], [0,0,0], [0,0,0,0,0,0], [0,0,0]],
 }
 
-input = [['attack','defense'][i%2] for i in range(12)]
+null_current_deck = {
+    'attack': 6,
+    'defense': 6,
+}
+
+current_deck = {
+    'attack': 6,
+    'defense': 6,
+}
+
+input = []
+for el in current_deck.keys():
+    for i in range(current_deck[el]):
+        input.append(el)
 shuffle(input)
 output = []
 
-cards_input = 12
+cards_input = len(input)
 cards_output = 0
 
 # [description, src]
 cards_view = {
-    'attack': ['Deal ' + str(cards['attack'][1]) + ' damage', 'data/images/cards/bercerk/attack.png'],
-    'defense': ['Gain ' + str(cards['defense'][1]) + ' block', 'data/images/cards/bercerk/defense.png'],
-    'crushHead': ['Attack ' + str(cards['crushHead'][1]) + ' and apply ' + str(cards['crushHead'][2]) +
-                 'vulnerable to enemy', 'data/images/cards/bercerk/AI/crushHead.png'],
+    'attack': ['Deal ' + str(cards['attack'][1][2:]) + ' damage', 'data/images/cards/bercerk/attack.png'],
+    'defense': ['Gain ' + str(cards['defense'][1][2:]) + ' block', 'data/images/cards/bercerk/defense.png'],
+    'crushHead': ['Attack ' + str(cards['crushHead'][1][2:]) + ' and apply ' + str(cards['crushHead'][2][3:]) +
+                 ' vulnerable to enemy', 'data/images/cards/bercerk/AI/crushHead.jpeg'],
 }
 get_cards_depend_hero_class = {
     'bercerk': ['attack','defense','crushHead']
@@ -71,20 +79,6 @@ get_cards_depend_hero_class = {
     # 'princess': ['removeCrown', 'throwCrown', 'putOnTheCrown', 'turn away', 'cry', 'hysterics',
     #              'depression', 'calm', 'curseGod', 'thankGod', 'scream', 'shutup', 'inject', 'rage', 'betweenLifeAndDeath']
 }
-
-
-
-
-current_deck = {
-    'attack': 6,
-    'defense': 6
-}
-
-def get_deck_cards_col():
-    sm = 0
-    for el in current_deck.keys():
-        sm+=current_deck[el]
-    return sm
 
 current_active_card = 0
 focused_cards = [False for i in range(len(input))]

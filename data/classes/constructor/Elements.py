@@ -20,7 +20,12 @@ class Surface:
         screen.blit(self.surface, pos)
 
     def scale(self, ex, k):
-        self.surface = pygame.transform.scale(self.surface,
+        if type(ex) is tuple:
+            self.surface = pygame.transform.scale(self.surface,
+                                                  (ex[1].get_width() * k, ex[1].get_height() * k)
+                                                  )
+        else:
+            self.surface = pygame.transform.scale(self.surface,
                                               (ex.get_width() * k, ex.get_height() * k)
                                               )
     def rotate(self,angle):
@@ -230,7 +235,7 @@ class TextButton(Button):
 
 
 
-class ImgButton(Button):
+class ImgButton(Button, Surface):
     def __init__(self, screen_info, src, pos, k=1):
         self.src_dark, self.src_light = src
 
@@ -242,6 +247,8 @@ class ImgButton(Button):
 
         self.surface = Img(screen_info, self.src_dark, k)
         self.surface_light = Img(screen_info, self.src_light, k)
+
+    # def scale(self):
 
     def draw_check_click(self, hotkey=None):
         px, py = self.pos

@@ -39,6 +39,8 @@ enemies = {
 
 
     'buff_check': [[40, 0, enemy_buffs, enemy_debuffs], [40], ['A4','BS4'], 'data/images/enemies/AI/flowers2.png'],
+
+    'wizard&guardian': ['wizard','guardian']
 }
 
 # [-player_hp, +enemy_hp, +enemy_df, +player_poison, +slave ...]
@@ -70,5 +72,5 @@ enemy_intentions = {
 level_enemy_types = {
     # 1: ['guardian', 'wizard', 'snakes', 'joker'],
     # 2: ['fear', 'fear_ghost', 'flowers', 'flowers2']
-    3: ['buff_check']
+    3: ['wizard&guardian']
 }

@@ -4,7 +4,7 @@ import keyboard
 
 import pygame
 
-from data.classes.constructor.Elements import CardImg, CText
+from data.classes.constructor.Elements import CardImg, CText, Img
 
 from data.global_vars import deck, hero, enemies
 
@@ -73,15 +73,16 @@ class Deck:
                 #ATTACK ENEMY
                 if action[1] == 'A':
                     attack = int(action[2:])
-                    if enemies.enemies[self.enemy.get_type()][0][1] <= 0:
-                        enemies.enemies[self.enemy.get_type()][0][0] -= attack
-                    else:
-                        if enemies.enemies[self.enemy.get_type()][0][1] - attack >= 0:
-                            enemies.enemies[self.enemy.get_type()][0][1] -= attack
+                    for el in self.enemy.get_names():
+                        if enemies.enemies[el][0][1] <= 0:
+                            enemies.enemies[el][0][0] -= attack
                         else:
-                            attack -= enemies.enemies[self.enemy.get_type()][0][1]
-                            enemies.enemies[self.enemy.get_type()][0][1] = 0
-                            enemies.enemies[self.enemy.get_type()][0][0] -= attack
+                            if enemies.enemies[el][0][1] - attack >= 0:
+                                enemies.enemies[el][0][1] -= attack
+                            else:
+                                attack -= enemies.enemies[el][0][1]
+                                enemies.enemies[el][0][1] = 0
+                                enemies.enemies[el][0][0] -= attack
                 # elif
             elif action[0] == 'P':
                 if action[1] == 'D':
@@ -118,11 +119,16 @@ class Card(Surface):
     def get_card(self):
         return self.card_src
 
-    @staticmethod
-    def collect_src(src):
-        return deck.cards_view[src][1]
+    def collect_src(self):
+        return deck.cards_view[self.card_src][1]
 
-    def __init__(self, screen_info, card_src, k, index):
+    def collect_src_name(self):
+        return self.card_src
+
+    def __init__(self, screen_info, card_src, k, index, card_chose = False, just_show=False):
+        self.card_chose = card_chose
+        self.just_show = just_show
+
         self.focus = False
         self.big_card_k = 1.5
 
@@ -138,7 +144,7 @@ class Card(Surface):
         self.card_src = card_src
 
 
-        img = self.collect_src(card_src)
+        img = self.collect_src()
         default_src = 'data/images/cards/'+hero.hero_class+'/default.png'
 
         self.k = k
@@ -213,7 +219,7 @@ class Card(Surface):
         self.screen = screen
         self.pos = pos
         self.screen = screen
-        if self.draw_check_click() == 'Play':
+        if self.draw_check_click(self.card_chose) == 'Play':
             return True
         self.draw_card_states()
 
@@ -227,7 +233,7 @@ class Card(Surface):
                 surface.scale(ex, 1)
         return surface
 
-    def draw_check_click(self, hotkey=None):
+    def draw_check_click(self, card_chose, hotkey=None):
         bws, bhs = self.surface.get_width(), self.surface.get_height() // 2
         bwb, bhb = self.big.get_width(), self.big.get_height() // 2
         mpx, mpy = pygame.mouse.get_pos()
@@ -268,19 +274,22 @@ class Card(Surface):
 
         self.are_pressed = False
         if not self.focus:
-            if (pxs <= mpx <= pxs + bws) and (pys <= mpy <= pys + bhs * 2):
-                if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
-                    self.focus = True
-                    deck.current_active_card = self.index
-            else:
-                self.focus = False
+            if not self.just_show:
+                if (pxs <= mpx <= pxs + bws) and (pys <= mpy <= pys + bhs * 2):
+                    if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
+                        self.focus = True
+                        deck.current_active_card = self.index
+                else:
+                    self.focus = False
         else:
             if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
                 if pygame.mouse.get_pressed()[0]:
-                    pxb, pyb = mpx - bwb // 2, mpy - bhb
-                    self.are_pressed = True
-                    self.was_pressed = True
-                    deck.focus_freeze = self.index
+                    if not card_chose:
+                        pxb, pyb = mpx - bwb // 2, mpy - bhb
+                        self.are_pressed = True
+                        self.was_pressed = True
+                        deck.focus_freeze = self.index
+                    else: return 'Play'
             if (pxb <= mpx <= pxb + bwb) and (pyb <= mpy <= pyb + bhb * 2):
                 deck.current_active_card = self.index
                 if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
@@ -292,6 +301,7 @@ class Card(Surface):
 
         if self.focus:
             pass
+            if card_chose: pyb -= self.surface.get_height()//6
             self.big.draw(self.screen, (pxb, pyb))
         else:
             pass

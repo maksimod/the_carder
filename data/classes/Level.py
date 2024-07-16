@@ -1,4 +1,4 @@
-from data.classes.Enemy import Enemy
+from data.classes.Enemy import Enemies
 from data.classes.Hero import Hero
 
 from data.global_vars import levels
@@ -13,36 +13,15 @@ from data.global_vars import hero, deck, enemies
 import pygame
 from random import *
 
-
-def restore_deck_parameters():
-    deck.input = [['attack', 'defense'][i % 2] for i in range(12)]
-    shuffle(deck.input)
-    deck.output = []
-    deck.cards_input = deck.get_deck_cards_col()
-    deck.cards_output = 0
-    deck.hand_cards_col = deck.hand_max_cards_col
-
-def restore_hero_parameters():
-    hero.hero[hero.hero_class][0][0] = hero.hero[hero.hero_class][1][0]
-    hero.hero[hero.hero_class][0][1] = 0
-    for i in range(len(hero.hero_debuffs)): hero.hero[hero.hero_class][0][-1][i] = 0
-    for i in range(len(hero.hero_buffs)): hero.hero[hero.hero_class][0][-2][i] = 0
-
-def restore_enemy_parameters(type):
-    #restore hp
-    enemies.enemies[type][0][0] = enemies.enemies[type][1][0]
-    #restore buffs/debuffs
-    for i in range(len(enemies.enemy_debuffs)): enemies.enemies[type][0][-1][i] = 0
-    for i in range(len(enemies.enemy_buffs)): enemies.enemies[type][0][-2][i] = 0
-
-
-def restore_parameters(enemy_type):
-    restore_deck_parameters()
-    restore_hero_parameters()
-    restore_enemy_parameters(enemy_type)
+from data.classes.Deck import Card
 
 class Level:
     def __init__(self,current_level, screen_info):
+        self.input_was_pressed = False
+        self.output_was_pressed = False
+        self.input_cards = []
+        self.output_cards = []
+
         screen_scale = screen_info[1]
         screen_size = screen_info[2]
 
@@ -62,7 +41,7 @@ class Level:
 
         get_enemies_by_level = enemies.level_enemy_types[current_level]
         self.enemy_name = get_enemies_by_level[randint(0, len(get_enemies_by_level)-1)]
-        self.current_enemy = Enemy(self.enemy_name, screen_info)
+        self.current_enemy = Enemies(self.enemy_name, screen_info)
 
         self.player = Hero(hero.hero_class, screen_info)
 
@@ -99,6 +78,8 @@ class Level:
         else:
             return -1
 
+    # def get_enemy_type(self):
+    #     return self.current_enemy.get_type()
 
     #This function draw player, cards, background and enemy every frame
     def draw(self, screen_info):
@@ -111,22 +92,26 @@ class Level:
             self.playerDeck.take_cards()
             pass
         if self.input.draw_check_click():
-            pass
+            self.input_was_pressed = True
         if self.output.draw_check_click():
-            pass
+            self.output_was_pressed = True
 
-
-        print(hero.hero[hero.hero_class][0][0])
         if hero.hero[hero.hero_class][0][0]<=0:
-            restore_parameters(self.current_enemy.get_type())
             del self.playerDeck
             return 'DEFEAT'
-        if enemies.enemies[self.current_enemy.get_type()][0][0]<=0:
-            restore_parameters(self.current_enemy.get_type())
+        #If ALL enemies (not slaves) were dead:
+        flag = True
+        for el in self.current_enemy.get_names():
+            if enemies.enemies[el][0][0]>0:
+                flag = False
+                break
+        if flag:
             del self.playerDeck
             return 'WIN'
 
-        self.current_enemy.draw_enemy()
+        # self.current_enemy.draw_enemy()
+        self.current_enemy.draw_enemies()
+
         self.player.update_hero()
 
 
@@ -137,3 +122,38 @@ class Level:
         self.output_text = CText(str(deck.cards_output), k=0.4)
         self.input_text.draw(screen, (self.inp_pos[0]+self.input.get_w()//4,self.inp_pos[1]+10))
         self.output_text.draw(screen, (self.out_pos[0] + self.input.get_w() // 4, self.out_pos[1] + 10))
+
+
+        #if we want to see input our output cards
+        if self.input_was_pressed:
+            screen.fill((0, 100, 200))
+            if pygame.mouse.get_pressed()[0]:
+                self.input_was_pressed = False
+            if self.input_cards:
+                i = 0
+                for el in self.input_cards:
+                    el.live(screen,(100+i*el.get_width()*1.1,80))
+                    i+=1
+            else:
+                i = 0
+                for el in deck.input:
+                    self.input_cards.append(Card(screen_info, el.collect_src_name(),0.3,i,just_show=True))
+                    i+=1
+                shuffle(self.input_cards)
+        else: self.input_cards = []
+
+        if self.output_was_pressed:
+            screen.fill((0, 100, 200))
+            if pygame.mouse.get_pressed()[0]:
+                self.output_was_pressed = False
+            if self.output_cards:
+                i = 0
+                for el in self.output_cards:
+                    el.live(screen,(100+i*el.get_width()*1.1,80))
+                    i+=1
+            else:
+                i = 0
+                for el in deck.output:
+                    self.output_cards.append(Card(screen_info, el.collect_src_name(),0.3,i,just_show=True))
+                    i+=1
+        else: self.output_cards = []

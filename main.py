@@ -15,9 +15,9 @@ level_passing = None
 
 running = True
 
-in_menu = True
+in_menu = False
 in_chose_hero = False
-in_card_chose = False
+in_card_chose = True
 
 in_level_passing = False
 
@@ -30,10 +30,13 @@ from data.classes.HeroChoseMenu import HeroChoseMenu
 from data.classes.CardChooseMenu import CardChooseMenu
 
 # menu = Menu(screen_info)
-
-menu = CardChooseMenu(screen_info)
+card_chose_menu = CardChooseMenu(screen_info)
 
 from data.classes.Level import Level
+
+from data.global_functions import restore
+
+level_passing = Level(current_level, screen_info)
 
 #hero
 hero_class = 'bercerk'
@@ -41,12 +44,8 @@ hero_class = 'bercerk'
 while running:
 # Меню
     if in_menu:
-        menu.draw(screen)
-        if menu.player_action_check():
-            in_menu = False
-            in_chose_hero = True
-            hero_chose_menu = HeroChoseMenu(screen_info)
-            del menu
+        if (menu.draw(screen)):
+            print('OK')
     elif in_chose_hero:
         hero_chose_menu.draw(screen)
         if hero_chose_menu.player_action_check():
@@ -56,16 +55,15 @@ while running:
             level_passing = Level(current_level, screen_info)
             del hero_chose_menu
     elif in_card_chose:
-        card_chose_menu = CardChooseMenu(screen_info)
-        if hero_chose_menu.player_action_check():
-            in_chose_hero = False
+        if card_chose_menu.draw(screen):
+            print("OK")
+            in_card_chose = False
             in_level_passing = True
-            # Go to 1st level, create a player
+
+            restore.next_level_parameters()
+
             level_passing = Level(current_level, screen_info)
-            del hero_chose_menu
-        level_passing = Level(current_level, screen_info)
-
-
+            del card_chose_menu
     elif in_level_passing:
         # If player goes on next level
         res = level_passing.draw(screen_info)
@@ -73,6 +71,7 @@ while running:
             in_menu = True
             in_level_passing = False
             menu = Menu(screen_info)
+            restore.null_parameters()
         elif (res == 'WIN'):
             current_level += 1
 

@@ -9,8 +9,43 @@ from time import *
 from data.global_vars import hero
 
 from data.classes.constructor.Elements import Img,Text
+
+class Enemies:
+    def __init__(self, enemy_types, screen_info):
+        enemy_name = []
+        start_ind = 0
+        end_ind = -1
+        if '&' in enemy_types:
+            for i in range(len(enemy_types)):
+                if enemy_types[i] == '&':
+                    end_ind = i
+                    enemy_name.append(enemy_types[start_ind:end_ind])
+                    start_ind = i+1
+        enemy_name.append(enemy_types[start_ind:])
+        self.enemy_name = enemy_name
+
+        #Now create enemies:
+        self.enemies = []
+        index = 0
+        for el in enemy_name:
+            self.enemies.append(Enemy(el, screen_info, index))
+            index+=1
+
+    def get_names(self):
+        return self.enemy_name
+
+    def draw_enemies(self):
+        for i in range(len(self.enemies)):
+            if self.enemies[i].get_hp()>0:
+                self.enemies[i].draw_enemy()
+
+    def make_turn(self):
+        for i in range(len(self.enemies)):
+            if self.enemies[i].get_hp() > 0:
+                self.enemies[i].make_turn()
+
 class Enemy:
-    def __init__(self, enemy_type, screen_info):
+    def __init__(self, enemy_type, screen_info, index):
         self.curent_intention_index = 0
 
         self.screen_info = screen_info
@@ -42,7 +77,7 @@ class Enemy:
         self.enemy_type = enemy_type
 
 
-        self.enemy_position = (1150, 350)
+        self.enemy_position = (1150-index*400, 350)
 
         #initialize enemy hp df rage line
         self.enemy_line = Line(screen_info, self.enemy_position, self.enemy_surface.get_size())

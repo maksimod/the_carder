@@ -20,7 +20,7 @@ import numpy as np
 # cv2.destroyAllWindows()
 #
 # sleep(3)
-
+from data.classes.Deck import Card
 class CardChooseMenu:
     def __init__(self, screen_info):
         pass
@@ -49,52 +49,41 @@ class CardChooseMenu:
         card2_choice = random.choice(deck.get_cards_depend_hero_class[hero_class])
         card3_choice = random.choice(deck.get_cards_depend_hero_class[hero_class])
 
-        card_img1 = deck.cards_view[card1_choice][-1]
-        card_img2 = deck.cards_view[card2_choice][-1]
-        card_img3 = deck.cards_view[card3_choice][-1]
+        # card_img1 = deck.cards_view[card1_choice][-1]
+        # card_img2 = deck.cards_view[card2_choice][-1]
+        # card_img3 = deck.cards_view[card3_choice][-1]
 
+        self.card_img1 = deck.cards_view[card1_choice][-1][(deck.cards_view[card1_choice][-1].rfind('/')+1):(deck.cards_view[card1_choice][-1].rfind('.'))]
+        self.card_img2 = deck.cards_view[card2_choice][-1][(deck.cards_view[card2_choice][-1].rfind('/')+1):(deck.cards_view[card2_choice][-1].rfind('.'))]
+        self.card_img3 = deck.cards_view[card3_choice][-1][(deck.cards_view[card3_choice][-1].rfind('/')+1):(deck.cards_view[card3_choice][-1].rfind('.'))]
 
-        card1_src = card_img1, np.uint8(np.double(cv2.imread(card_img1)) + 15)
-        card2_src = card_img2, np.uint8(np.double(cv2.imread(card_img2)) + 15)
-        card3_src = card_img3, np.uint8(np.double(cv2.imread(card_img3)) + 15)
-
-        y_k = 1.47
-        self.card1 = ImgButton(screen_info,card1_src, (0, self.h//y_k), button_scale)
-        self.card2 = ImgButton(screen_info, card2_src, (self.card1.get_w(), self.h // y_k), button_scale)
-        self.card3 = ImgButton(screen_info, card3_src, (self.card1.get_w()*2, self.h // y_k), button_scale)
-        # self.princess = ImgButton(screen_info, princess_src, (self.bercerk.get_w()*3, self.h // y_k), button_scale)
+        self.card1 = Card(screen_info, self.card_img1, 0.8, 1, card_chose=True)
+        self.card2 = Card(screen_info, self.card_img2, 0.8, 1, card_chose=True)
+        self.card3 = Card(screen_info, self.card_img3, 0.8, 1, card_chose=True)
 
         # Actions
         # self.create_clouds()
         MusicPlayer.play('data/music/CardChoose.mp3')
 
+        self.card_x_offset = 200
     def mouse_check(self):
-        if self.bercerk.draw_check_click():
-            hero.hero_class = 'bercerk'
-            self.next_level = True
-            MusicPlayer.stop()
+        if self.card1.live(self.screen_info[0], (200,290)):
+            if self.card_img1 in deck.current_deck.keys(): deck.current_deck[self.card_img1]+=1
+            else: deck.current_deck[self.card_img1]=1
             return True
-        if self.isolda.draw_check_click():
-            hero.hero_class = 'isolda'
-            self.next_level = True
-            MusicPlayer.stop()
+        if self.card2.live(self.screen_info[0], (200+self.card1.get_width()+self.card_x_offset, 290)):
+            if self.card_img2 in deck.current_deck.keys(): deck.current_deck[self.card_img2]+=1
+            else: deck.current_deck[self.card_img2]=1
             return True
-        if self.joker.draw_check_click():
-            hero.hero_class = 'joker'
-            self.next_level = True
-            MusicPlayer.stop()
+        if self.card3.live(self.screen_info[0], (200+2*(self.card1.get_width()+self.card_x_offset), 290)):
+            if self.card_img3 in deck.current_deck.keys(): deck.current_deck[self.card_img3]+=1
+            else: deck.current_deck[self.card_img3]=1
             return True
-        if self.princess.draw_check_click():
-            hero.hero_class = 'princess'
-            self.next_level = True
-            MusicPlayer.stop()
-            return True
-
-    def player_action_check(self):
-        if self.next_level: return True
 
     def draw(self, screen):
         self.background.draw(screen,(0, 0))
         # self.draw_clouds(screen)
-        self.mouse_check()
+        if self.mouse_check():
+            print("RET")
+            return True
         # The carder text
