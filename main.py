@@ -15,13 +15,13 @@ level_passing = None
 
 running = True
 
-in_menu = False
+in_menu = True
 in_chose_hero = False
-in_card_chose = True
+in_card_chose = False
 
 in_level_passing = False
 
-current_level = 3
+current_level = 1
 screen_info = [screen, screen_scale, screen_size]
 
 pygame.init()
@@ -29,22 +29,24 @@ from data.classes.MainMenu import Menu
 from data.classes.HeroChoseMenu import HeroChoseMenu
 from data.classes.CardChooseMenu import CardChooseMenu
 
-# menu = Menu(screen_info)
-card_chose_menu = CardChooseMenu(screen_info)
+menu = Menu(screen_info)
 
 from data.classes.Level import Level
 
 from data.global_functions import restore
 
-level_passing = Level(current_level, screen_info)
-
 #hero
 hero_class = 'bercerk'
 
 while running:
-# Меню
     if in_menu:
-        if (menu.draw(screen)):
+        menu.draw(screen)
+        if (menu.player_action_check()):
+            in_menu = False
+            in_level_passing = True
+            # Go to 1st level, create a player
+            level_passing = Level(current_level, screen_info)
+            del menu
             print('OK')
     elif in_chose_hero:
         hero_chose_menu.draw(screen)
@@ -79,7 +81,6 @@ while running:
             in_card_chose = True
 
             card_chose_menu = CardChooseMenu(screen_info)
-
 
     # Updating display, control fps
     pygame.display.update()

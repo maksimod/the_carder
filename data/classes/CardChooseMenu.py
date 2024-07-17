@@ -63,7 +63,7 @@ class CardChooseMenu:
 
         # Actions
         # self.create_clouds()
-        MusicPlayer.play('data/music/CardChoose.mp3')
+        # MusicPlayer.play('data/music/CardChoose.mp3')
 
         self.card_x_offset = 200
     def mouse_check(self):

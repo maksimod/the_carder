@@ -70,7 +70,7 @@ enemy_intentions = {
 }
 
 level_enemy_types = {
-    # 1: ['guardian', 'wizard', 'snakes', 'joker'],
-    # 2: ['fear', 'fear_ghost', 'flowers', 'flowers2']
-    3: ['wizard&guardian']
+    1: ['guardian', 'wizard', 'snakes', 'joker'],
+    2: ['fear', 'fear_ghost', 'flowers', 'flowers2']
+    # 3: ['wizard&guardian']
 }

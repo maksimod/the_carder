@@ -61,10 +61,13 @@ class Level:
         output_src = 'data/images/elements/deck/output.png', 'data/images/elements/deck/output_light.png'
         self.out_pos = (w-200, h - 100)
         self.output = ImgButton(screen_info, output_src, self.out_pos, k=0.2)
+
+        # self.another .
+
         # self.output_text = CText(str(deck.cards_output), k=0.4)
 
         #Start music
-        MusicPlayer.play(self.music)
+        # MusicPlayer.play(self.music)
 
         #create a deck
         self.playerDeck = Deck(screen_info, self.current_enemy, self.player)

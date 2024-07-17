@@ -9,6 +9,17 @@ from data import MusicPlayer
 class Menu:
     # Menu_variables
     def __init__(self, screen_info):
+        bercerk_src = 'data/images/elements/hero_cards/bercerk.png', 'data/images/elements/hero_cards/bercerk_light.png'
+        # isolda_src = 'data/images/elements/hero_cards/isolda.png', 'data/images/elements/hero_cards/isolda_light.png'
+        # joker_src = 'data/images/elements/hero_cards/Joker.png', 'data/images/elements/hero_cards/Joker_light.png'
+        # princess_src = 'data/images/elements/hero_cards/the_princess.png', 'data/images/elements/hero_cards/the_princess_light.png'
+        y_k = 1.47
+        self.bercerk = ImgButton(screen_info,bercerk_src, (200, 200), 1)
+        # self.isolda = ImgButton(screen_info, isolda_src, (self.bercerk.get_w(), self.h // y_k), button_scale)
+        # self.joker = ImgButton(screen_info, joker_src, (self.bercerk.get_w()*2, self.h // y_k), button_scale)
+        # self.princess = ImgButton(screen_info, princess_src, (self.bercerk.get_w()*3, self.h // y_k), button_scale)
+
+
         self.screen_info = screen_info
         screen, screen_scale, screen_size = screen_info
 
@@ -39,7 +50,7 @@ class Menu:
 
         # Actions
         self.create_clouds()
-        MusicPlayer.play('data/music/lev0.mp3')
+        # MusicPlayer.play('data/music/lev0.mp3')
 
     # Menu_clouds
     def create_clouds(self):
@@ -94,6 +105,9 @@ class Menu:
         if self.next_level: return True
 
     def draw(self, screen):
+        if self.bercerk.draw_check_click():
+            pass
+
         self.background.draw(screen,(0, 0))
         self.draw_clouds(screen)
         self.mouse_check()
