@@ -2,7 +2,7 @@ import keyboard
 import pygame
 from sys import exit
 # Set screen
-screen_scale = 1.5
+screen_scale = 1
 w, h = int(1200 * screen_scale), int(600 * screen_scale)
 screen_size = [w, h]
 screen = pygame.display.set_mode((w, h))
@@ -15,9 +15,9 @@ level_passing = None
 
 running = True
 
-in_menu = True
+in_menu = False
 in_chose_hero = False
-in_card_chose = False
+in_card_chose = True
 
 in_level_passing = False
 
@@ -30,6 +30,7 @@ from data.classes.HeroChoseMenu import HeroChoseMenu
 from data.classes.CardChooseMenu import CardChooseMenu
 
 menu = Menu(screen_info)
+card_chose_menu = CardChooseMenu(screen_info)
 
 from data.classes.Level import Level
 

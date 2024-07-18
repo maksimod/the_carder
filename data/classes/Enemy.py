@@ -193,7 +193,16 @@ class Enemy:
             intentions_pos[1]+intention.get_height()//2-self.intention_text.get_height()//2)
         )
 
+    def check_focus(self):
+        mx,my = pygame.mouse.get_pos()
+        
+        if mx>self.enemy_position:
+            print('OK')
+        else:
+            print('NOK')
+
     def draw_enemy(self):
+        self.check_focus
         self.screen.blit(self.enemy_surface, self.enemy_position)
         self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
         self.draw_enemy_intention()

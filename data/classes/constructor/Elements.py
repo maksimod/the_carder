@@ -49,7 +49,7 @@ class Img(Surface):
 #for card class
 class CardImg(Img):
     def __init__(self, screen_info,default_src, img_src, k=1):
-        print(img_src)
+        # print(img_src)
 
         self.screen = screen_info[0]
         self.screen_scale = screen_info[1]
@@ -86,6 +86,33 @@ class CardImg(Img):
                                               (self.img_surface.get_width() * k, self.img_surface.get_height() * k)
                                               )
 
+
+class Hint:
+    def __init__(self, screen_info, hint_type, k=1):
+        self.screen_scale = screen_info[1]
+        
+        hint_k = 0.4*k
+        hint_text_k = 0.4*hint_k
+        hint_src = 'data/images/elements/hints/card_description_hints.png'
+        self.hint_surface = Img(screen_info, hint_src, k=hint_k)
+        
+        self.hint_text = CText(hint_type, k = hint_text_k, str_symbols=22)
+        
+    def draw(self, screen, pos):
+        self.hint_surface.draw(screen, pos)
+        
+        xoffset = 16*self.screen_scale
+        yoffset = 14 * self.screen_scale
+        
+        self.hint_text.draw(screen,(pos[0]+xoffset,pos[1]+yoffset))
+        # for i in range(len(self.hint_texts)):
+        #     self.hint_texts[i].draw(screen,(pos[0]+xoffset,pos[1]+self.hint_texts[0].get_height()*i+yoffset))
+
+    def get_height(self):
+        return self.hint_surface.get_height()
+
+
+
 from data.global_vars import deck, hero
 class Card(Surface):
 
@@ -104,6 +131,8 @@ class Card(Surface):
     def __init__(self, screen_info, card_src, k, index, card_chose = False, just_show=False):
         self.card_chose = card_chose
         self.just_show = just_show
+        
+        self.screen_scale = screen_info[1]
 
         self.focus = False
         self.big_card_k = 1.5
@@ -129,43 +158,37 @@ class Card(Surface):
 
         self.big = CardImg(screen_info, default_src, img)
         self.big.scale(self.big, k * self.big_card_k)
-
-    @staticmethod
-    def transfer_description(description, number):
-        res = []
-        last_i = 0
-        for i in range(1, len(description)):
-            if i % number == 0:
-                res.append(description[last_i:i])
-                last_i = i
-        res.append(description[last_i:])
-        return res
+        
+        #create hints
+        description = deck.cards_view[self.card_src][0]
+        
+        #add description
+        description_k = 0.5
+        local_k = self.k*self.screen_scale-0.3
+        self.description = CText(description, k=description_k * local_k, str_symbols=19)
+        self.f_description = CText(description, k=description_k * local_k * self.big_card_k, str_symbols=19)
+        
+        self.description_hints = []
+        for el in deck.described_characteristics:
+            if el in description:
+                self.description_hints.append(Hint(screen_info, str(deck.described_characteristics[el])))
 
     def draw_card_states(self):
-
+       
         cost = str(deck.cards[self.card_src][0])
         self.cost = cost
-        k, big_card_k = self.k, self.big_card_k
-        description = deck.cards_view[self.card_src][0]
-
-        descs = self.transfer_description(description, 13)
+        k, big_card_k = self.k*self.screen_scale-0.3, self.big_card_k
+        
+        # description = deck.cards_view[self.card_src][0]
 
         cost_k = 0.6
         title_key = 0.5
-        description_k = 0.5
 
         cost_text, f_cost_text = CText(cost, k=k * cost_k), CText(cost, k=k * cost_k * big_card_k)
 
         title = self.card_src
         title_text, f_title_text = CText(title, k=k * title_key), CText(title, k=k * title_key * big_card_k)
 
-        descs_texts = []
-        f_descs_texts = []
-        for el in descs:
-            descs_texts.append(CText(el, k=description_k * k))
-            f_descs_texts.append(CText(el, k=description_k * k * big_card_k))
-
-        # description, f_description = CText(description, k=description_k * k), CText(description, k=description_k * k * big_card_k)
         if not self.focus:
             cost_pos = (self.real_pos[0] + cost_text.get_width() // 2, self.real_pos[1] + cost_text.get_height() // 6)
             cost_text.draw(self.screen, cost_pos)
@@ -174,11 +197,11 @@ class Card(Surface):
             title_text.draw(self.screen, title_pos)
 
             description_pos = (self.real_pos[0] + self.bws // 8, self.real_pos[1] + self.bhs // 0.85)
-            counter = 0
-            for item in descs_texts:
-                item.draw(self.screen, (description_pos[0], description_pos[1] + item.get_height() * counter))
-                counter += 1
+            
+            self.description.draw(self.screen, description_pos)
         else:
+            offset = 10 * self.screen_scale
+            
             f_cost_pos = (self.pxb + f_cost_text.get_width() // 2, self.pyb + f_cost_text.get_height() // 6)
             f_cost_text.draw(self.screen, f_cost_pos)
 
@@ -186,10 +209,15 @@ class Card(Surface):
             f_title_text.draw(self.screen, f_title_pos)
 
             f_description_pos = (self.pxb + self.bwb//10, self.pyb + self.bhb // 0.85)
-            counter = 0
-            for item in f_descs_texts:
-                item.draw(self.screen, (f_description_pos[0], f_description_pos[1] + item.get_height() * counter))
-                counter += 1
+
+            self.f_description.draw(self.screen, f_description_pos)
+            
+            #show states hints
+            if len(self.description_hints) != 0:
+                for i in range(len(self.description_hints)):
+                    self.description_hints[i].draw(self.screen, (self.pxb + self.big.get_width() + offset,
+                                                                 self.pyb + self.description_hints[
+                                                                     0].get_height() * i))
 
     def live(self, screen, pos):
         self.screen = screen
@@ -298,7 +326,10 @@ class Text(Surface):
         self.surface = text_font.render(text, False, color)
 
 class CText(Surface):
-    def __init__(self, text, k=1, font=None, color=[255, 255, 255], sysFont = None):
+    def __init__(self, text, k=1, font=None, color=[255, 255, 255], sysFont = None, str_symbols=None):
+        self.str_symbols = str_symbols
+        text = str(text)
+        
         if font is None and sysFont is None: sysFont='arial'
 
         text_font = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * k))
@@ -306,8 +337,41 @@ class CText(Surface):
             text_font = pygame.font.Font(font, int(150 * k))
         elif sysFont is not None:
             text_font = pygame.font.SysFont(font, int(150 * k))
-
-        self.surface = text_font.render(text, False, color)
+        
+        if str_symbols is not None:
+            max_str_sumb = str_symbols
+            self.texts = []
+            
+            words = text.split(' ')
+            
+            while words:
+                counter = 0
+                summ_len = 0
+                while summ_len<max_str_sumb:
+                    #+1 - space
+                    if len(words)-1>=counter:
+                        summ_len+=len(words[counter])+1
+                        counter+=1
+                    else:
+                        break
+                # counter-=1
+                while summ_len>max_str_sumb:
+                    counter-=1
+                    summ_len= summ_len - len(str(words[counter])) - 1
+                self.texts.append(text_font.render(text[:summ_len], False, color))
+                text = text[summ_len:]
+                for i in range(counter): words.pop(0)
+            
+            self.texts.append(text_font.render(text, False, color))
+            
+        else: self.surface = text_font.render(text, False, color)
+    
+    def draw(self, screen, pos):
+        if self.str_symbols is not None:
+            for i in range(len(self.texts)):
+                screen.blit(self.texts[i], (pos[0],pos[1]+self.texts[i].get_height()*i))
+        else:
+            screen.blit(self.surface,pos)
 
 
 class Button:
