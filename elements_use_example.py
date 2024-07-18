@@ -1,6 +1,3 @@
-import keyboard
-import pygame
-
 #Load all our elements
 from data.classes.constructor.Elements import *
 # Set screen
@@ -19,17 +16,17 @@ running = True
 pygame.init()
 from data.classes.MainMenu import Menu
 
-menu = Menu(screen_info)
+menu = Menu()
 
 
 # create an image object with 0.4 scale
-myImg = Img(screen_info, 'data/images/heroes/bercerk_hero.png', k=0.4)
+myImg = Img('data/images/heroes/bercerk_hero.png', k=0.4)
 
 # create a Card. 2-nd parameter you can find in /data/global_vars/deck ... cards variable (keys of this dictionary)
 #we use index to understand what card is focused right now (another cards must 'move over')
-myCard1 = Card(screen_info, 'attack', 0.5, 0)
+myCard1 = Card('attack', 0.5, 0)
 #try set 0 index to card and check card behaviour
-myCard2 = Card(screen_info, 'defense', 0.5, 1)
+myCard2 = Card('defense', 0.5, 1)
 
 #Create text object and set optional parameters
 myText = Text('The carder',k=0.8, color=[200,200,255])
@@ -38,9 +35,9 @@ myCText = CText('The carder', k=0.8, color=[200,200,255])
 
 #crete 2 buttons:
 text_info = ['Click me!', 0.8, (100,100,100)]
-myTextButton = TextButton(text_info, (1200, 200),  screen, 0)
+myTextButton = TextButton(text_info, (1200, 200), 0)
 src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
-myImgButton = ImgButton(screen_info, src, (1200, 400), k=0.2)
+myImgButton = ImgButton(src, (1200, 400), k=0.2)
 
 #create
 #hero
@@ -51,15 +48,15 @@ while running:
     screen.fill([0,0,0])
 
     #place my Img object on the half of the screen
-    myImg.draw(screen, (w//2-myImg.get_width()//2,h//2-myImg.get_height()//2))
+    myImg.draw((w//2-myImg.get_width()//2,h//2-myImg.get_height()//2))
     
     #place a CardImg object right up
-    myCard1.live(screen, (1200,h-myCard1.get_height()))
-    myCard2.live(screen, (1200+myCard1.get_width(), h - myCard2.get_height()))
+    myCard1.live((1200,h-myCard1.get_height()))
+    myCard2.live((1200+myCard1.get_width(), h - myCard2.get_height()))
     
     #place texts
-    myText.draw(screen, (100,200))
-    myCText.draw(screen, (100, 400))
+    myText.draw((100,200))
+    myCText.draw((100, 400))
     
     #place buttons
     if myTextButton.draw_check_click(): print('CLICKED TEXT BUTTON!')

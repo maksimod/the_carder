@@ -3,7 +3,7 @@ import pygame
 from data.global_vars.enemies import *
 
 from data.classes.constructor.Lines_constructor import Line
-
+from data.global_vars.screen_info import *
 from time import *
 
 from data.global_vars import hero
@@ -11,7 +11,7 @@ from data.global_vars import hero
 from data.classes.constructor.Elements import Img,Text
 
 class Enemies:
-    def __init__(self, enemy_types, screen_info):
+    def __init__(self, enemy_types):
         enemy_name = []
         start_ind = 0
         end_ind = -1
@@ -28,7 +28,7 @@ class Enemies:
         self.enemies = []
         index = 0
         for el in enemy_name:
-            self.enemies.append(Enemy(el, screen_info, index))
+            self.enemies.append(Enemy(el, index))
             index+=1
 
     def get_names(self):
@@ -45,19 +45,11 @@ class Enemies:
                 self.enemies[i].make_turn()
 
 class Enemy:
-    def __init__(self, enemy_type, screen_info, index):
+    def __init__(self, enemy_type, index):
         self.curent_intention_index = 0
 
-        self.screen_info = screen_info
-
-        screen = screen_info[0]
-        screen_scale = screen_info[1]
-        screen_size = screen_info[2]
-
-        self.screen = screen
         self.h = screen_size[1]
         self.w = screen_size[0]
-        self.screen_scale = screen_scale
 
         self.enemy_type = enemy_type
         self.enemy_hp = enemies[self.enemy_type][0][0]
@@ -70,21 +62,21 @@ class Enemy:
 
         self.enemy_surface = pygame.image.load(enemies[enemy_type][3])
         self.enemy_surface = pygame.transform.scale(self.enemy_surface, (
-            self.enemy_surface.get_size()[0] * self.screen_scale * self.enemy_scale,
-            self.enemy_surface.get_size()[1] * self.screen_scale * self.enemy_scale))
+            self.enemy_surface.get_size()[0] * screen_scale * self.enemy_scale,
+            self.enemy_surface.get_size()[1] * screen_scale * self.enemy_scale))
 
         self.enemy_size = self.enemy_surface.get_size()
         self.enemy_type = enemy_type
 
 
-        self.enemy_position = (1150-index*400, 350)
+        self.enemy_position = (750*screen_scale-index*400*screen_scale, 230*screen_scale)
 
         #initialize enemy hp df rage line
-        self.enemy_line = Line(screen_info, self.enemy_position, self.enemy_surface.get_size())
+        self.enemy_line = Line(self.enemy_position, self.enemy_surface.get_size())
 
         if 'AI' in enemies[self.enemy_type][3]:
             pass
-            self.enemy_position = [self.enemy_position[0]+120,self.enemy_position[1]]
+            self.enemy_position = [self.enemy_position[0]+120*screen_scale,self.enemy_position[1]]
 
 
     def get_type(self):
@@ -154,7 +146,6 @@ class Enemy:
 
         enemy_intention_images = enemy_intentions[current_intention[0]]
 
-
         intention_scale = 0.3
 
         value_amount = ''
@@ -175,8 +166,8 @@ class Enemy:
                     + inten_surf_ex.get_width() // 4,
                     self.enemy_line.lines_position[1] - inten_surf_ex.get_height() // 2)
 
-                    intention = Img(self.screen_info, enemy_intention_images[el], k=intention_scale)
-                    intention.draw(self.screen,intentions_pos)
+                    intention = Img(enemy_intention_images[el], k=intention_scale)
+                    intention.draw(intentions_pos)
                     break
         else:
             inten_surf_ex = pygame.image.load(enemy_intention_images)
@@ -185,10 +176,10 @@ class Enemy:
                 + inten_surf_ex.get_width() // 4,
                 self.enemy_line.lines_position[1] - inten_surf_ex.get_height() // 2)
 
-            intention = Img(self.screen_info, enemy_intention_images, k=intention_scale)
-            intention.draw(self.screen,intentions_pos)
+            intention = Img(enemy_intention_images, k=intention_scale)
+            intention.draw(intentions_pos)
 
-        self.intention_text.draw(self.screen, (
+        self.intention_text.draw((
             intentions_pos[0]+intention.get_width()//2-self.intention_text.get_width()//2,
             intentions_pos[1]+intention.get_height()//2-self.intention_text.get_height()//2)
         )
@@ -203,7 +194,7 @@ class Enemy:
 
     def draw_enemy(self):
         self.check_focus
-        self.screen.blit(self.enemy_surface, self.enemy_position)
+        screen.blit(self.enemy_surface, self.enemy_position)
         self.enemy_line.draw(enemies[self.enemy_type], mirror=True)
         self.draw_enemy_intention()
 

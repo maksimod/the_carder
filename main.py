@@ -1,11 +1,12 @@
 import keyboard
 import pygame
 from sys import exit
-# Set screen
-screen_scale = 1
-w, h = int(1200 * screen_scale), int(600 * screen_scale)
-screen_size = [w, h]
-screen = pygame.display.set_mode((w, h))
+
+from data.classes.MainMenu import Menu
+from data.classes.HeroChoseMenu import HeroChoseMenu
+from data.classes.CardChooseMenu import CardChooseMenu
+from data.global_vars.screen_info import *
+
 pygame.display.set_caption('Carder')
 
 # To control fps
@@ -15,22 +16,18 @@ level_passing = None
 
 running = True
 
-in_menu = False
+in_menu = True
 in_chose_hero = False
 in_card_chose = True
 
 in_level_passing = False
 
 current_level = 1
-screen_info = [screen, screen_scale, screen_size]
 
 pygame.init()
-from data.classes.MainMenu import Menu
-from data.classes.HeroChoseMenu import HeroChoseMenu
-from data.classes.CardChooseMenu import CardChooseMenu
 
-menu = Menu(screen_info)
-card_chose_menu = CardChooseMenu(screen_info)
+menu = Menu()
+card_chose_menu = CardChooseMenu()
 
 from data.classes.Level import Level
 
@@ -41,39 +38,39 @@ hero_class = 'bercerk'
 
 while running:
     if in_menu:
-        menu.draw(screen)
+        menu.draw()
         if (menu.player_action_check()):
             in_menu = False
             in_level_passing = True
             # Go to 1st level, create a player
-            level_passing = Level(current_level, screen_info)
+            level_passing = Level(current_level)
             del menu
             print('OK')
     elif in_chose_hero:
-        hero_chose_menu.draw(screen)
+        hero_chose_menu.draw()
         if hero_chose_menu.player_action_check():
             in_chose_hero = False
             in_level_passing = True
             # Go to 1st level, create a player
-            level_passing = Level(current_level, screen_info)
+            level_passing = Level(current_level)
             del hero_chose_menu
     elif in_card_chose:
-        if card_chose_menu.draw(screen):
+        if card_chose_menu.draw():
             print("OK")
             in_card_chose = False
             in_level_passing = True
 
             restore.next_level_parameters()
 
-            level_passing = Level(current_level, screen_info)
+            level_passing = Level(current_level)
             del card_chose_menu
     elif in_level_passing:
         # If player goes on next level
-        res = level_passing.draw(screen_info)
+        res = level_passing.draw()
         if res == 'DEFEAT':
             in_menu = True
             in_level_passing = False
-            menu = Menu(screen_info)
+            menu = Menu()
             restore.null_parameters()
         elif (res == 'WIN'):
             current_level += 1
@@ -81,7 +78,7 @@ while running:
             in_level_passing = False
             in_card_chose = True
 
-            card_chose_menu = CardChooseMenu(screen_info)
+            card_chose_menu = CardChooseMenu()
 
     # Updating display, control fps
     pygame.display.update()

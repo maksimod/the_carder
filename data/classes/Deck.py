@@ -1,11 +1,5 @@
-import time
-import keyboard
-# from random import shuffle
-
-import pygame
-
-from data.classes.constructor.Elements import CardImg, CText, Img, Card
-
+from data.classes.constructor.Elements import Card
+from data.global_vars.screen_info import *
 from data.global_vars import deck, hero, enemies
 
 from time import *
@@ -14,7 +8,7 @@ from random import shuffle
 
 class Deck:
 
-    def __init__(self, screen_info, enemy, player):
+    def __init__(self, enemy, player):
         self.enemy,self.player = enemy,player
 
         if deck.hand_cards_col<=6:
@@ -22,13 +16,9 @@ class Deck:
         else:
             k = 0.4 - (deck.hand_cards_col-6)*0.03
 
-        self.screen = screen_info[0]
-        self.screen_scale = screen_info[1]
-        self.screen_size = screen_info[2]
-
         #convert card names to real cards!
         for i in range(len(deck.input)):
-            deck.input[i] = Card(screen_info, deck.input[i], k, i)
+            deck.input[i] = Card(deck.input[i], k, i)
 
         self.cards = []
         for i in range(deck.hand_cards_col):
@@ -97,14 +87,46 @@ class Deck:
         return True
 
     def draw(self):
-        # print(deck.focused_cards)
+        # print(deck.hand_cards_col)
+        
         cards = self.cards
-        for i in range(deck.hand_cards_col):
-            card_pos_x = self.screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[0].get_width()
-            card_pos_y = self.screen_size[1] - cards[0].get_height()
-            if cards[i].live(self.screen, (card_pos_x,card_pos_y)) == True:
+        focused_card_index = -1
+        flag = False
+        index_rewrite = False
+        rewrite_index = -1
+        for i in range(len(deck.focused_cards)):
+            # print(deck.focused_cards, i)
+            if not (deck.focused_cards[i]):
+                card_pos_x = screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[
+                    0].get_width()
+                card_pos_y = screen_size[1] - cards[0].get_height()
+                if cards[i].live((card_pos_x, card_pos_y)) == True:
+                    if self.play_card(cards[i].get_card(), cards[i]):
+                        # pass
+                        del cards[i]
+                        deck.hand_cards_col -= 1
+                        deck.focused_cards = [False for i in range(deck.hand_cards_col)]
+                        index_rewrite = True
+                        rewrite_index = i
+                        break
+            else:
+                focused_card_index = i
+                flag = True
+        if flag:
+            i = focused_card_index
+            card_pos_x = screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[
+                0].get_width()
+            card_pos_y = screen_size[1] - cards[0].get_height()
+            if cards[i].live((card_pos_x, card_pos_y)) == True:
                 if self.play_card(cards[i].get_card(), cards[i]):
                     del cards[i]
                     deck.hand_cards_col -= 1
-                    break
-                # self.play_card(cards[i].get_card())
+                    deck.focused_cards = [False for i in range(deck.hand_cards_col)]
+                    index_rewrite = True
+                    rewrite_index = i
+                    
+        # rewrite card indexes:
+        if index_rewrite:
+            for i in range(len(deck.focused_cards)):
+                if cards[i].index > rewrite_index:
+                    cards[i].index -= 1

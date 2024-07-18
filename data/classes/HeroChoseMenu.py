@@ -7,6 +7,8 @@ from data import MusicPlayer
 
 from data.global_vars import hero
 
+from data.global_vars.screen_info import *
+
 class HeroChoseMenu:
     # Menu_variables
     def __init__(self, screen_info):
@@ -66,7 +68,7 @@ class HeroChoseMenu:
     def player_action_check(self):
         if self.next_level: return True
 
-    def draw(self, screen):
+    def draw(self):
         self.background.draw(screen,(0, 0))
         # self.draw_clouds(screen)
         self.mouse_check()

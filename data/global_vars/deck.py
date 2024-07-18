@@ -88,5 +88,5 @@ get_cards_depend_hero_class = {
 }
 
 current_active_card = 0
-focused_cards = [False for i in range(len(input))]
+focused_cards = [False for i in range(hand_cards_col)]
 focus_freeze = None

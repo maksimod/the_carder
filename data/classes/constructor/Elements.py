@@ -3,6 +3,7 @@ import keyboard
 
 from data.global_vars.button_focus import menu_buttons
 
+from data.global_vars.screen_info import *
 
 class Surface:
     def get_size(self):
@@ -17,7 +18,7 @@ class Surface:
     def get_surface(self):
         return self.surface
     
-    def draw(self, screen, pos):
+    def draw(self, pos):
         screen.blit(self.surface, pos)
     
     def scale(self, ex, k):
@@ -35,14 +36,11 @@ class Surface:
 
 
 class Img(Surface):
-    def __init__(self, screen_info, src, k=1):
-        self.screen = screen_info[0]
-        self.screen_scale = screen_info[1]
-        
+    def __init__(self, src, k=1):
         self.surface = pygame.image.load(src)
         self.surface = pygame.transform.scale(self.surface,
-                                              (self.surface.get_width() * k * self.screen_scale,
-                                               self.surface.get_height() * k * self.screen_scale
+                                              (self.surface.get_width() * k * screen_scale,
+                                               self.surface.get_height() * k * screen_scale
                                                )
                                               )
     
@@ -52,12 +50,7 @@ class Img(Surface):
 
 # for card class
 class CardImg(Img):
-    def __init__(self, screen_info, default_src, img_src, k=1):
-        # print(img_src)
-        
-        self.screen = screen_info[0]
-        self.screen_scale = screen_info[1]
-        
+    def __init__(self, default_src, img_src, k=1):
         self.imageIsAI = False
         if 'AI' in img_src: self.imageIsAI = True
         
@@ -67,18 +60,18 @@ class CardImg(Img):
             img_scale = 1
         self.img_surface = pygame.image.load(img_src)
         self.img_surface = pygame.transform.scale(self.img_surface,
-                                                  (self.img_surface.get_width() * k * self.screen_scale * img_scale,
-                                                   self.img_surface.get_height() * k * self.screen_scale * img_scale
+                                                  (self.img_surface.get_width() * k * screen_scale * img_scale,
+                                                   self.img_surface.get_height() * k * screen_scale * img_scale
                                                    )
                                                   )
         self.surface = pygame.image.load(default_src)
         self.surface = pygame.transform.scale(self.surface,
-                                              (self.surface.get_width() * k * self.screen_scale,
-                                               self.surface.get_height() * k * self.screen_scale
+                                              (self.surface.get_width() * k * screen_scale,
+                                               self.surface.get_height() * k * screen_scale
                                                )
                                               )
     
-    def draw(self, screen, pos):
+    def draw(self, pos):
         if self.imageIsAI:
             screen.blit(self.img_surface,
                         [pos[0] + self.surface.get_width() // 4, pos[1] + self.surface.get_height() // 6.5])
@@ -97,26 +90,22 @@ class CardImg(Img):
 
 
 class Hint:
-    def __init__(self, screen_info, hint_type, k=1):
-        self.screen_scale = screen_info[1]
-        
+    def __init__(self, hint_type, k=1):
         hint_k = 0.4 * k
         hint_text_k = 0.4 * hint_k
         hint_src = 'data/images/elements/hints/card_description_hints.png'
-        self.hint_surface = Img(screen_info, hint_src, k=hint_k)
+        self.hint_surface = Img(hint_src, k=hint_k)
         
         self.hint_text = CText(hint_type + ' ' + deck.described_characteristics[hint_type], k=hint_text_k,
                                str_symbols=22, card_descr=True)
     
-    def draw(self, screen, pos):
-        self.hint_surface.draw(screen, pos)
+    def draw(self, pos):
+        self.hint_surface.draw(pos)
         
-        xoffset = 16 * self.screen_scale
-        yoffset = 14 * self.screen_scale
+        xoffset = 16 * screen_scale
+        yoffset = 14 * screen_scale
         
-        self.hint_text.draw(screen, (pos[0] + xoffset, pos[1] + yoffset))
-        # for i in range(len(self.hint_texts)):
-        #     self.hint_texts[i].draw(screen,(pos[0]+xoffset,pos[1]+self.hint_texts[0].get_height()*i+yoffset))
+        self.hint_text.draw((pos[0] + xoffset, pos[1] + yoffset))
     
     def get_height(self):
         return self.hint_surface.get_height()
@@ -134,23 +123,21 @@ class Card(Surface):
         return self.card_src
     
     def collect_src(self):
+        # print(self.card_src)
         return deck.cards_view[self.card_src][1]
     
     def collect_src_name(self):
         return self.card_src
     
-    def __init__(self, screen_info, card_src, k, index, card_chose=False, just_show=False):
+    def __init__(self, card_src, k, index, card_chose=False, just_show=False):
         self.card_chose = card_chose
         self.just_show = just_show
-        
-        self.screen_scale = screen_info[1]
         
         self.focus = False
         self.big_card_k = 1.5
         
         self.index = index
         
-        # self.pos = pos
         self.are_pressed = False
         self.was_pressed = False
         self.was_pressed_enter = False
@@ -163,10 +150,10 @@ class Card(Surface):
         default_src = 'data/images/cards/' + hero.hero_class + '/default.png'
         
         self.k = k
-        self.surface = CardImg(screen_info, default_src, img)
+        self.surface = CardImg(default_src, img)
         self.surface.scale(self.surface, k)
         
-        self.big = CardImg(screen_info, default_src, img)
+        self.big = CardImg(default_src, img)
         self.big.scale(self.big, k * self.big_card_k)
         
         # create hints
@@ -174,22 +161,20 @@ class Card(Surface):
         
         # add description
         description_k = 0.5
-        local_k = self.k * self.screen_scale - 0.3
+        local_k = self.k * screen_scale - 0.3
         self.description = CText(description, k=description_k * local_k, str_symbols=19)
         self.f_description = CText(description, k=description_k * local_k * self.big_card_k, str_symbols=19)
         
         self.description_hints = []
         for el in deck.described_characteristics:
             if el in description:
-                self.description_hints.append(Hint(screen_info, str(el)))
+                self.description_hints.append(Hint(str(el)))
     
     def draw_card_states(self):
         
         cost = str(deck.cards[self.card_src][0])
         self.cost = cost
-        k, big_card_k = self.k * self.screen_scale - 0.3, self.big_card_k
-        
-        # description = deck.cards_view[self.card_src][0]
+        k, big_card_k = self.k * screen_scale - 0.3, self.big_card_k
         
         cost_k = 0.6
         title_key = 0.5
@@ -201,40 +186,38 @@ class Card(Surface):
         
         if not self.focus:
             cost_pos = (self.real_pos[0] + cost_text.get_width() // 2, self.real_pos[1] + cost_text.get_height() // 6)
-            cost_text.draw(self.screen, cost_pos)
+            cost_text.draw(cost_pos)
             
             title_pos = (self.real_pos[0] + self.surface.get_width() // 2 - title_text.get_width() // 2,
                          self.real_pos[1] + title_text.get_height() // 2)
-            title_text.draw(self.screen, title_pos)
+            title_text.draw(title_pos)
             
             description_pos = (self.real_pos[0] + self.bws // 8, self.real_pos[1] + self.bhs // 0.85)
             
-            self.description.draw(self.screen, description_pos)
+            self.description.draw(description_pos)
         else:
-            offset = 10 * self.screen_scale
+            offset = 10 * screen_scale
             
             f_cost_pos = (self.pxb + f_cost_text.get_width() // 2, self.pyb + f_cost_text.get_height() // 6)
-            f_cost_text.draw(self.screen, f_cost_pos)
+            f_cost_text.draw(f_cost_pos)
             
             f_title_pos = (self.pxb + self.big.get_width() // 2 - f_title_text.get_width() // 2,
                            self.pyb + f_title_text.get_height() // 2)
-            f_title_text.draw(self.screen, f_title_pos)
+            f_title_text.draw(f_title_pos)
             
             f_description_pos = (self.pxb + self.bwb // 10, self.pyb + self.bhb // 0.85)
             
-            self.f_description.draw(self.screen, f_description_pos)
+            self.f_description.draw(f_description_pos)
             
             # show states hints
             if len(self.description_hints) != 0:
                 for i in range(len(self.description_hints)):
-                    self.description_hints[i].draw(self.screen, (self.pxb + self.big.get_width() + offset,
+                    self.description_hints[i].draw((self.pxb + self.big.get_width() + offset,
                                                                  self.pyb + self.description_hints[
                                                                      0].get_height() * i))
     
-    def live(self, screen, pos):
-        self.screen = screen
+    def live(self, pos):
         self.pos = pos
-        self.screen = screen
         if self.draw_check_click(self.card_chose) == 'Play':
             return True
         self.draw_card_states()
@@ -270,7 +253,7 @@ class Card(Surface):
                     self.real_pos[0] += (bwb - bws) // 2
         
         pxs, pys = self.real_pos
-        pxb, pyb = pxs - (bwb - bws) // 2, self.screen.get_height() - bhb * 2
+        pxb, pyb = pxs - (bwb - bws) // 2, screen.get_height() - bhb * 2
         
         if not (self.are_pressed) and self.was_pressed:
             if mpy > pyb:
@@ -291,6 +274,7 @@ class Card(Surface):
         
         self.are_pressed = False
         if not self.focus:
+            # deck.focused_cards[self.index] = False
             if not self.just_show:
                 if (pxs <= mpx <= pxs + bws) and (pys <= mpy <= pys + bhs * 2):
                     if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
@@ -315,15 +299,14 @@ class Card(Surface):
             else:
                 self.focus = False
         
-        deck.focused_cards[self.index] = self.focus
+        # print(self.index)
+        if self.index<len(deck.focused_cards):
+            deck.focused_cards[self.index] = self.focus
         
         if self.focus:
-            pass
             if card_chose: pyb -= self.surface.get_height() // 6
-            self.big.draw(self.screen, (pxb, pyb))
-        else:
-            pass
-            self.surface.draw(self.screen, (pxs, pys))
+            self.big.draw((pxb, pyb))
+        else: self.surface.draw((pxs, pys))
         
         self.pxb, self.pyb = pxb, pyb
         self.bws, self.bhs, self.bwb, self.bhb = bws, bhs, bwb, bhb
@@ -370,13 +353,11 @@ class CText(Surface):
                 counter = 0
                 summ_len = 0
                 while summ_len < max_str_sumb:
-                    # +1 - space
                     if len(words) - 1 >= counter:
                         summ_len += len(words[counter]) + 1
                         counter += 1
                     else:
                         break
-                # counter-=1
                 while summ_len > max_str_sumb:
                     counter -= 1
                     summ_len = summ_len - len(str(words[counter])) - 1
@@ -390,7 +371,7 @@ class CText(Surface):
         else:
             self.surface = text_font.render(text, False, color)
     
-    def draw(self, screen, pos):
+    def draw(self, pos):
         if self.str_symbols is not None:
             for i in range(len(self.texts)):
                 screen.blit(self.texts[i], (pos[0], pos[1] + self.texts[i].get_height() * i))
@@ -436,13 +417,12 @@ class Button:
 
 
 class TextButton(Button):
-    def __init__(self, button_text_info, pos, screen, index, font=None):
+    def __init__(self, button_text_info, pos, index, font=None):
         text, text_size_scale, text_color = button_text_info
         self.text, self.text_size_scale, self.text_color = text, text_size_scale, text_color
         
         self.index = index
         
-        self.screen = screen
         super().__init__(pos)
         
         light_text_color = [self.text_color[0] + 50, self.text_color[1] + 50, self.text_color[2] + 50]
@@ -462,7 +442,7 @@ class TextButton(Button):
             for i in range(len(menu_buttons)): menu_buttons[i] = False
             menu_buttons[self.index] = True
             
-            self.light_surface.draw(self.screen, (
+            self.light_surface.draw((
                 px + (self.surface.get_width() - self.light_surface.get_width()) / 2,
                 py - bh + (self.surface.get_height() - self.light_surface.get_height()) / 2)
                                     )
@@ -476,16 +456,14 @@ class TextButton(Button):
                     self.was_pressed = False
                     return True
         else:
-            # if self.was_pressed: return True
             self.light_surface = self.make_size('N', self.light_surface, self.surface,
                                                 txt=self.text, color=self.light_text_color, k=self.text_size_scale)
             self.was_pressed = False
             if not (menu_buttons[self.index]):
-                self.surface.draw(self.screen, (px, py - bh))
+                self.surface.draw((px, py - bh))
         
         # Если все еще в фокусе
         if menu_buttons[self.index]:
-            
             if keyboard.is_pressed('up'):
                 self.was_pressed_up = True
             else:
@@ -514,27 +492,21 @@ class TextButton(Button):
             else:
                 if self.was_pressed_enter == True: return True
             
-            self.light_surface.draw(self.screen, (
+            self.light_surface.draw((
                 px + (self.surface.get_width() - self.light_surface.get_width()) / 2,
                 py - bh + (self.surface.get_height() - self.light_surface.get_height()) / 2)
                                     )
-            #     return True
 
 
 class ImgButton(Button, Surface):
-    def __init__(self, screen_info, src, pos, k=1):
+    def __init__(self, src, pos, k=1):
         self.src_dark, self.src_light = src
-        
-        self.screen = screen_info[0]
-        self.screen_scale = screen_info[1]
         
         self.k = k
         super().__init__(pos)
         
-        self.surface = Img(screen_info, self.src_dark, k)
-        self.surface_light = Img(screen_info, self.src_light, k)
-    
-    # def scale(self):
+        self.surface = Img(self.src_dark, k)
+        self.surface_light = Img(self.src_light, k)
     
     def draw_check_click(self, hotkey=None):
         px, py = self.pos
@@ -543,7 +515,7 @@ class ImgButton(Button, Surface):
         
         rpy = py - int(10.1 * self.k)
         if (px <= mpx <= px + bw) and (rpy - bh <= mpy <= rpy + bh):
-            self.surface_light.draw(self.screen, (
+            self.surface_light.draw((
                 px + (self.surface.get_width() - self.surface_light.get_width()) // 2,
                 py - bh + (self.surface.get_height() - self.surface_light.get_height()) // 2)
                                     )
@@ -557,7 +529,7 @@ class ImgButton(Button, Surface):
                     return True
         else:
             self.surface_light = self.make_size('N', self.surface_light, ex=self.surface, src=self.src_light)
-            self.surface.draw(self.screen, (px, py - bh))
+            self.surface.draw((px, py - bh))
             self.was_pressed = False
         
         if hotkey is not None:

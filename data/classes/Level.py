@@ -15,15 +15,14 @@ from random import *
 
 from data.classes.Deck import Card
 
+from data.global_vars.screen_info import *
+
 class Level:
-    def __init__(self,current_level, screen_info):
+    def __init__(self,current_level):
         self.input_was_pressed = False
         self.output_was_pressed = False
         self.input_cards = []
         self.output_cards = []
-
-        screen_scale = screen_info[1]
-        screen_size = screen_info[2]
 
         w,h = screen_size
         self.w,self.h = w,h
@@ -41,9 +40,9 @@ class Level:
 
         get_enemies_by_level = enemies.level_enemy_types[current_level]
         self.enemy_name = get_enemies_by_level[randint(0, len(get_enemies_by_level)-1)]
-        self.current_enemy = Enemies(self.enemy_name, screen_info)
+        self.current_enemy = Enemies(self.enemy_name)
 
-        self.player = Hero(hero.hero_class, screen_info)
+        self.player = Hero(hero.hero_class)
 
         #Creating serfaces to make opportunity to put them on the screen
         self.background = pygame.image.load(background_path)
@@ -51,26 +50,21 @@ class Level:
             self.background.get_size()[0] * screen_scale, self.background.get_size()[1] * screen_scale))
 
         next_turn_src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
-        self.next_turn = ImgButton(screen_info,next_turn_src,(w-200,h-250), k=0.2)
+        self.next_turn = ImgButton(next_turn_src,(w-200,h-250), k=0.2)
 
         input_src = 'data/images/elements/deck/input.png','data/images/elements/deck/input_light.png'
         self.inp_pos = (100,h-100)
-        self.input = ImgButton(screen_info,input_src,self.inp_pos, k=0.2)
-        # self.input_text = CText(str(deck.cards_input),k=0.4)
+        self.input = ImgButton(input_src,self.inp_pos, k=0.2)
 
         output_src = 'data/images/elements/deck/output.png', 'data/images/elements/deck/output_light.png'
         self.out_pos = (w-200, h - 100)
-        self.output = ImgButton(screen_info, output_src, self.out_pos, k=0.2)
-
-        # self.another .
-
-        # self.output_text = CText(str(deck.cards_output), k=0.4)
+        self.output = ImgButton(output_src, self.out_pos, k=0.2)
 
         #Start music
         # MusicPlayer.play(self.music)
 
         #create a deck
-        self.playerDeck = Deck(screen_info, self.current_enemy, self.player)
+        self.playerDeck = Deck(self.current_enemy, self.player)
 
     def check_win(self):
         mp = pygame.mouse.get_pos()
@@ -85,11 +79,14 @@ class Level:
     #     return self.current_enemy.get_type()
 
     #This function draw player, cards, background and enemy every frame
-    def draw(self, screen_info):
+    def draw(self):
         screen = screen_info[0]
         screen.blit(self.background, (0, 0))
 
         if self.next_turn.draw_check_click():
+            # print(deck.hand_cards_col)
+            deck.hand_cards_col = deck.hand_max_cards_col
+            deck.focused_cards = [False for i in range(deck.hand_cards_col)]
             self.current_enemy.make_turn()
             self.player.make_turn()
             self.playerDeck.take_cards()
@@ -123,8 +120,8 @@ class Level:
             # print("OK!")
         self.input_text = CText(str(deck.cards_input), k=0.4)
         self.output_text = CText(str(deck.cards_output), k=0.4)
-        self.input_text.draw(screen, (self.inp_pos[0]+self.input.get_w()//4,self.inp_pos[1]+10))
-        self.output_text.draw(screen, (self.out_pos[0] + self.input.get_w() // 4, self.out_pos[1] + 10))
+        self.input_text.draw((self.inp_pos[0]+self.input.get_w()//4,self.inp_pos[1]+10))
+        self.output_text.draw((self.out_pos[0] + self.input.get_w() // 4, self.out_pos[1] + 10))
 
 
         #if we want to see input our output cards
@@ -135,12 +132,12 @@ class Level:
             if self.input_cards:
                 i = 0
                 for el in self.input_cards:
-                    el.live(screen,(100+i*el.get_width()*1.1,80))
+                    el.live((100+i*el.get_width()*1.1,80))
                     i+=1
             else:
                 i = 0
                 for el in deck.input:
-                    self.input_cards.append(Card(screen_info, el.collect_src_name(),0.3,i,just_show=True))
+                    self.input_cards.append(Card(el.collect_src_name(),0.3,i,just_show=True))
                     i+=1
                 shuffle(self.input_cards)
         else: self.input_cards = []
@@ -157,6 +154,6 @@ class Level:
             else:
                 i = 0
                 for el in deck.output:
-                    self.output_cards.append(Card(screen_info, el.collect_src_name(),0.3,i,just_show=True))
+                    self.output_cards.append(Card(el.collect_src_name(),0.3,i,just_show=True))
                     i+=1
         else: self.output_cards = []
