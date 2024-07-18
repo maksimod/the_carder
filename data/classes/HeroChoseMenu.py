@@ -11,19 +11,16 @@ from data.global_vars.screen_info import *
 
 class HeroChoseMenu:
     # Menu_variables
-    def __init__(self, screen_info):
-        self.screen_info = screen_info
-        screen, screen_scale, screen_size = screen_info
+    def __init__(self):
 
         self.next_level = False
         self.text_size_scale = 1 * screen_scale
 
-        self.screen_size = screen_size
-        self.h = self.screen_size[1]
-        self.w = self.screen_size[0]
+        self.h = screen_size[1]
+        self.w = screen_size[0]
 
         # Surfaces
-        self.background = Img(self.screen_info, 'data/images/elements/class_choose.png')
+        self.background = Img('data/images/elements/class_choose.png')
 
         button_scale = 0.5715 * screen_scale
         # bp = (60, 300)
@@ -34,14 +31,14 @@ class HeroChoseMenu:
         joker_src = 'data/images/elements/hero_cards/Joker.png', 'data/images/elements/hero_cards/Joker_light.png'
         princess_src = 'data/images/elements/hero_cards/the_princess.png', 'data/images/elements/hero_cards/the_princess_light.png'
         y_k = 1.47
-        self.bercerk = ImgButton(screen_info,bercerk_src, (0, self.h//y_k), button_scale)
-        self.isolda = ImgButton(screen_info, isolda_src, (self.bercerk.get_w(), self.h // y_k), button_scale)
-        self.joker = ImgButton(screen_info, joker_src, (self.bercerk.get_w()*2, self.h // y_k), button_scale)
-        self.princess = ImgButton(screen_info, princess_src, (self.bercerk.get_w()*3, self.h // y_k), button_scale)
+        self.bercerk = ImgButton(bercerk_src, (0, self.h//y_k), button_scale)
+        self.isolda = ImgButton(isolda_src, (self.bercerk.get_w(), self.h // y_k), button_scale)
+        self.joker = ImgButton(joker_src, (self.bercerk.get_w()*2, self.h // y_k), button_scale)
+        self.princess = ImgButton(princess_src, (self.bercerk.get_w()*3, self.h // y_k), button_scale)
 
         # Actions
         # self.create_clouds()
-        MusicPlayer.play('data/music/heroChose.mp3')
+        # MusicPlayer.play('data/music/heroChose.mp3')
 
     def mouse_check(self):
         if self.bercerk.draw_check_click():

@@ -50,14 +50,14 @@ class Level:
             self.background.get_size()[0] * screen_scale, self.background.get_size()[1] * screen_scale))
 
         next_turn_src = 'data/images/elements/buttons/next_turn.png','data/images/elements/buttons/next_turn_light.png'
-        self.next_turn = ImgButton(next_turn_src,(w-200,h-250), k=0.2)
+        self.next_turn = ImgButton(next_turn_src,(w-150*screen_scale,h-150*screen_scale), k=0.2)
 
         input_src = 'data/images/elements/deck/input.png','data/images/elements/deck/input_light.png'
-        self.inp_pos = (100,h-100)
+        self.inp_pos = (75*screen_scale,h-50*screen_scale)
         self.input = ImgButton(input_src,self.inp_pos, k=0.2)
 
         output_src = 'data/images/elements/deck/output.png', 'data/images/elements/deck/output_light.png'
-        self.out_pos = (w-200, h - 100)
+        self.out_pos = (w-150*screen_scale, h - 50*screen_scale)
         self.output = ImgButton(output_src, self.out_pos, k=0.2)
 
         #Start music
@@ -75,10 +75,6 @@ class Level:
         else:
             return -1
 
-    # def get_enemy_type(self):
-    #     return self.current_enemy.get_type()
-
-    #This function draw player, cards, background and enemy every frame
     def draw(self):
         screen = screen_info[0]
         screen.blit(self.background, (0, 0))
@@ -109,7 +105,6 @@ class Level:
             del self.playerDeck
             return 'WIN'
 
-        # self.current_enemy.draw_enemy()
         self.current_enemy.draw_enemies()
 
         self.player.update_hero()
@@ -117,12 +112,10 @@ class Level:
 
         self.playerDeck.draw()
 
-            # print("OK!")
-        self.input_text = CText(str(deck.cards_input), k=0.4)
-        self.output_text = CText(str(deck.cards_output), k=0.4)
+        self.input_text = CText(str(deck.cards_input), k=0.2*screen_scale)
+        self.output_text = CText(str(deck.cards_output), k=0.2*screen_scale)
         self.input_text.draw((self.inp_pos[0]+self.input.get_w()//4,self.inp_pos[1]+10))
         self.output_text.draw((self.out_pos[0] + self.input.get_w() // 4, self.out_pos[1] + 10))
-
 
         #if we want to see input our output cards
         if self.input_was_pressed:
@@ -132,12 +125,18 @@ class Level:
             if self.input_cards:
                 i = 0
                 for el in self.input_cards:
-                    el.live((100+i*el.get_width()*1.1,80))
-                    i+=1
+                    max_str_cards = 8
+                    if i < max_str_cards:
+                        el.live((100*screen_scale + i * el.get_width() * 1.1, 50*screen_scale))
+                    elif max_str_cards * 2 > i >= max_str_cards:
+                        el.live((100*screen_scale + (i - max_str_cards) * el.get_width() * 1.1, 50*screen_scale + el.get_height() + 40*screen_scale))
+                    else:
+                        el.live((100*screen_scale + (i - max_str_cards * 2) * el.get_width() * 1.1, 50*screen_scale + 2 * (el.get_height() + 40*screen_scale)))
+                    i += 1
             else:
                 i = 0
                 for el in deck.input:
-                    self.input_cards.append(Card(el.collect_src_name(),0.3,i,just_show=True))
+                    self.input_cards.append(Card(el.collect_src_name(),0.4,i,just_show=True))
                     i+=1
                 shuffle(self.input_cards)
         else: self.input_cards = []
@@ -149,11 +148,18 @@ class Level:
             if self.output_cards:
                 i = 0
                 for el in self.output_cards:
-                    el.live(screen,(100+i*el.get_width()*1.1,80))
+                    #max 5 cards in stroke
+                    max_str_cards = 8
+                    if i<max_str_cards:
+                        el.live((100*screen_scale+i*el.get_width()*1.1,50*screen_scale))
+                    elif max_str_cards*2>i>=max_str_cards:
+                        el.live((100*screen_scale + (i - max_str_cards) * el.get_width() * 1.1, 50*screen_scale + el.get_height() + 40*screen_scale))
+                    else:
+                        el.live((100*screen_scale + (i-max_str_cards*2) * el.get_width() * 1.1, 50*screen_scale+ 2*(el.get_height()+40*screen_scale)))
                     i+=1
             else:
                 i = 0
                 for el in deck.output:
-                    self.output_cards.append(Card(el.collect_src_name(),0.3,i,just_show=True))
+                    self.output_cards.append(Card(el.collect_src_name(),0.4,i,just_show=True))
                     i+=1
         else: self.output_cards = []

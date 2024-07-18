@@ -146,7 +146,7 @@ class Enemy:
 
         enemy_intention_images = enemy_intentions[current_intention[0]]
 
-        intention_scale = 0.3
+        intention_scale = 0.2 * screen_scale
 
         value_amount = ''
         # current intention = A/D/H/P/etc.
@@ -155,26 +155,31 @@ class Enemy:
             if current_intention[0] == 'A':
                 value_amount += enemies[self.enemy_type][0][-2][buffs_indexes['S']]
 
-        self.intention_text = Text(str(value_amount),sysFont='arial', k=0.5)
+        self.intention_text = Text(str(value_amount),sysFont='arial', k=0.2*screen_scale)
 
         if (len(enemy_intention_images)>1) and (type(enemy_intention_images) is not str):
             for el in enemy_intention_images.keys():
                 if int(current_intention[1:])<=int(el):
                     inten_surf_ex = pygame.image.load(enemy_intention_images[el])
+                    inten_surf_ex = pygame.transform.scale(inten_surf_ex, (
+                    inten_surf_ex.get_width() * intention_scale, inten_surf_ex.get_height() * intention_scale))
+                    print(inten_surf_ex.get_height())
                     intentions_pos = (
                     self.enemy_line.lines_position[0] + self.enemy_line.hp_trace_surface.get_width() // 4
-                    + inten_surf_ex.get_width() // 4,
-                    self.enemy_line.lines_position[1] - inten_surf_ex.get_height() // 2)
+                    + inten_surf_ex.get_width() // 1,
+                    self.enemy_line.lines_position[1] - inten_surf_ex.get_height()*1*screen_scale)
 
                     intention = Img(enemy_intention_images[el], k=intention_scale)
                     intention.draw(intentions_pos)
                     break
         else:
             inten_surf_ex = pygame.image.load(enemy_intention_images)
+            inten_surf_ex = pygame.transform.scale(inten_surf_ex, (inten_surf_ex.get_width()*intention_scale, inten_surf_ex.get_height()*intention_scale))
+            print(inten_surf_ex.get_height())
             intentions_pos = (
                 self.enemy_line.lines_position[0] + self.enemy_line.hp_trace_surface.get_width() // 4
-                + inten_surf_ex.get_width() // 4,
-                self.enemy_line.lines_position[1] - inten_surf_ex.get_height() // 2)
+                + inten_surf_ex.get_width() // 1,
+                self.enemy_line.lines_position[1] - inten_surf_ex.get_height()*1*screen_scale)
 
             intention = Img(enemy_intention_images, k=intention_scale)
             intention.draw(intentions_pos)

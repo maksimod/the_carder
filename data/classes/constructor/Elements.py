@@ -91,8 +91,8 @@ class CardImg(Img):
 
 class Hint:
     def __init__(self, hint_type, k=1):
-        hint_k = 0.4 * k
-        hint_text_k = 0.4 * hint_k
+        hint_k = 0.3 * k * screen_scale
+        hint_text_k = 0.35 * hint_k
         hint_src = 'data/images/elements/hints/card_description_hints.png'
         self.hint_surface = Img(hint_src, k=hint_k)
         
@@ -102,8 +102,8 @@ class Hint:
     def draw(self, pos):
         self.hint_surface.draw(pos)
         
-        xoffset = 16 * screen_scale
-        yoffset = 14 * screen_scale
+        xoffset = 10 * screen_scale
+        yoffset = 10 * screen_scale
         
         self.hint_text.draw((pos[0] + xoffset, pos[1] + yoffset))
     
@@ -130,6 +130,7 @@ class Card(Surface):
         return self.card_src
     
     def __init__(self, card_src, k, index, card_chose=False, just_show=False):
+        # print(k)
         self.card_chose = card_chose
         self.just_show = just_show
         
@@ -161,7 +162,7 @@ class Card(Surface):
         
         # add description
         description_k = 0.5
-        local_k = self.k * screen_scale - 0.3
+        local_k = self.k * screen_scale * 0.5
         self.description = CText(description, k=description_k * local_k, str_symbols=19)
         self.f_description = CText(description, k=description_k * local_k * self.big_card_k, str_symbols=19)
         
@@ -174,7 +175,7 @@ class Card(Surface):
         
         cost = str(deck.cards[self.card_src][0])
         self.cost = cost
-        k, big_card_k = self.k * screen_scale - 0.3, self.big_card_k
+        k, big_card_k = self.k * screen_scale * 0.5, self.big_card_k
         
         cost_k = 0.6
         title_key = 0.5
@@ -374,7 +375,7 @@ class CText(Surface):
     def draw(self, pos):
         if self.str_symbols is not None:
             for i in range(len(self.texts)):
-                screen.blit(self.texts[i], (pos[0], pos[1] + self.texts[i].get_height() * i))
+                screen.blit(self.texts[i], (pos[0], pos[1] + self.texts[i].get_height() * i * screen_scale * 0.8))
         else:
             screen.blit(self.surface, pos)
 

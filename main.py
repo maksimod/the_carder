@@ -5,7 +5,10 @@ from sys import exit
 from data.classes.MainMenu import Menu
 from data.classes.HeroChoseMenu import HeroChoseMenu
 from data.classes.CardChooseMenu import CardChooseMenu
+from data.classes.Level import Level
+
 from data.global_vars.screen_info import *
+from data.global_functions import restore
 
 pygame.display.set_caption('Carder')
 
@@ -16,22 +19,20 @@ level_passing = None
 
 running = True
 
-in_menu = True
+in_menu = False
 in_chose_hero = False
-in_card_chose = True
-
-in_level_passing = False
+in_card_chose = False
+in_level_passing = True
 
 current_level = 1
 
 pygame.init()
 
 menu = Menu()
+card_chose_hero = HeroChoseMenu()
 card_chose_menu = CardChooseMenu()
+level_passing = Level(current_level)
 
-from data.classes.Level import Level
-
-from data.global_functions import restore
 
 #hero
 hero_class = 'bercerk'
@@ -65,7 +66,6 @@ while running:
             level_passing = Level(current_level)
             del card_chose_menu
     elif in_level_passing:
-        # If player goes on next level
         res = level_passing.draw()
         if res == 'DEFEAT':
             in_menu = True

@@ -1,12 +1,13 @@
 import pygame
 
 from data.global_vars import hero
+from data.global_vars.screen_info import *
 
 from data.classes.constructor.Lines_constructor import Line
 
 # heroes
 hero_scale = 0.3
-hero_position = (100, 300)
+hero_position = (80*screen_scale, 200*screen_scale)
 
 from data.global_vars.screen_info import *
 
