@@ -64,16 +64,17 @@ cards_output = 0
 
 
 described_characteristics = {
-    'vulnerable': 'target will get 25% more damage'
+    'Vulnerable': 'Target will get 25% more damage',
+    'Block': 'Untill next turn, prevents damage'
 }
 
 
 # [description, src]
 cards_view = {
-    'attack': ['Deal ' + str(cards['attack'][1][2:]) + ' damage. I am a big fan of fan to eat boob', 'data/images/cards/bercerk/attack.png'],
-    'defense': ['Gain ' + str(cards['defense'][1][2:]) + ' block', 'data/images/cards/bercerk/defense.png'],
+    'attack': ['Deal ' + str(cards['attack'][1][2:]) + ' damage.', 'data/images/cards/bercerk/attack.png'],
+    'defense': ['Gain ' + str(cards['defense'][1][2:]) + ' Block', 'data/images/cards/bercerk/defense.png'],
     'crushHead': ['Attack ' + str(cards['crushHead'][1][2:]) + ' and apply ' + str(cards['crushHead'][2][3:]) +
-                 ' vulnerable to enemy', 'data/images/cards/bercerk/AI/crushHead.jpeg'],
+                 ' Vulnerable to enemy and Block', 'data/images/cards/bercerk/AI/crushHead.jpeg'],
 }
 get_cards_depend_hero_class = {
     'bercerk': ['attack','defense','crushHead']

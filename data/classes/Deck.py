@@ -97,6 +97,7 @@ class Deck:
         return True
 
     def draw(self):
+        # print(deck.focused_cards)
         cards = self.cards
         for i in range(deck.hand_cards_col):
             card_pos_x = self.screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[0].get_width()

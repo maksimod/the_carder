@@ -45,9 +45,9 @@ class CardChooseMenu:
         self.card_img2 = deck.cards_view[card2_choice][-1][(deck.cards_view[card2_choice][-1].rfind('/')+1):(deck.cards_view[card2_choice][-1].rfind('.'))]
         self.card_img3 = deck.cards_view[card3_choice][-1][(deck.cards_view[card3_choice][-1].rfind('/')+1):(deck.cards_view[card3_choice][-1].rfind('.'))]
 
-        self.card1 = Card(screen_info, self.card_img1, 0.6, 1, card_chose=True)
+        self.card1 = Card(screen_info, self.card_img1, 0.6, 0, card_chose=True)
         self.card2 = Card(screen_info, self.card_img2, 0.6, 1, card_chose=True)
-        self.card3 = Card(screen_info, self.card_img3, 0.6, 1, card_chose=True)
+        self.card3 = Card(screen_info, self.card_img3, 0.6, 2, card_chose=True)
 
         # Actions
         # self.create_clouds()
@@ -56,21 +56,60 @@ class CardChooseMenu:
         self.card_x_offset = 100*self.screen_scale
     def mouse_check(self):
         kx = 200
-        
-        if self.card1.live(self.screen_info[0], (kx*self.screen_scale,290*self.screen_scale)):
-            if self.card_img1 in deck.current_deck.keys(): deck.current_deck[self.card_img1]+=1
-            else: deck.current_deck[self.card_img1]=1
-            return True
-        if self.card2.live(self.screen_info[0], (kx*self.screen_scale+self.card1.get_width()+self.card_x_offset, 290*self.screen_scale)):
-            if self.card_img2 in deck.current_deck.keys(): deck.current_deck[self.card_img2]+=1
-            else: deck.current_deck[self.card_img2]=1
-            return True
-        if self.card3.live(self.screen_info[0], (kx*self.screen_scale+2*(self.card1.get_width()+self.card_x_offset), 290*self.screen_scale)):
-            if self.card_img3 in deck.current_deck.keys(): deck.current_deck[self.card_img3]+=1
-            else: deck.current_deck[self.card_img3]=1
-            return True
-
+        if deck.focused_cards[0]:
+            if self.card2.live(self.screen_info[0], (kx*self.screen_scale+self.card1.get_width()+self.card_x_offset, 290*self.screen_scale)):
+                if self.card_img2 in deck.current_deck.keys():
+                    deck.current_deck[self.card_img2]+=1
+                else:
+                    deck.current_deck[self.card_img2]=1
+                return True
+            if self.card3.live(self.screen_info[0], (kx*self.screen_scale+2*(self.card1.get_width()+self.card_x_offset), 290*self.screen_scale)):
+                if self.card_img3 in deck.current_deck.keys():
+                    deck.current_deck[self.card_img3]+=1
+                else:
+                    deck.current_deck[self.card_img3]=1
+                return True
+            if self.card1.live(self.screen_info[0], (kx*self.screen_scale,290*self.screen_scale)):
+                if self.card_img1 in deck.current_deck.keys(): deck.current_deck[self.card_img1]+=1
+                else: deck.current_deck[self.card_img1]=1
+                return True
+        elif deck.focused_cards[1]:
+            if self.card1.live(self.screen_info[0], (kx*self.screen_scale,290*self.screen_scale)):
+                if self.card_img1 in deck.current_deck.keys():
+                    deck.current_deck[self.card_img1]+=1
+                else:
+                    deck.current_deck[self.card_img1]=1
+                return True
+            if self.card3.live(self.screen_info[0], (kx*self.screen_scale+2*(self.card1.get_width()+self.card_x_offset), 290*self.screen_scale)):
+                if self.card_img3 in deck.current_deck.keys():
+                    deck.current_deck[self.card_img3]+=1
+                else:
+                    deck.current_deck[self.card_img3]=1
+                return True
+            if self.card2.live(self.screen_info[0], (kx*self.screen_scale+self.card1.get_width()+self.card_x_offset, 290*self.screen_scale)):
+                if self.card_img2 in deck.current_deck.keys(): deck.current_deck[self.card_img2]+=1
+                else: deck.current_deck[self.card_img2]=1
+                return True
+        else:
+            if self.card1.live(self.screen_info[0], (kx*self.screen_scale,290*self.screen_scale)):
+                if self.card_img1 in deck.current_deck.keys():
+                    deck.current_deck[self.card_img1]+=1
+                else:
+                    deck.current_deck[self.card_img1]=1
+                return True
+            if self.card2.live(self.screen_info[0], (kx*self.screen_scale+self.card1.get_width()+self.card_x_offset, 290*self.screen_scale)):
+                if self.card_img2 in deck.current_deck.keys():
+                    deck.current_deck[self.card_img2]+=1
+                else:
+                    deck.current_deck[self.card_img2]=1
+                return True
+            if self.card3.live(self.screen_info[0], (kx*self.screen_scale+2*(self.card1.get_width()+self.card_x_offset), 290*self.screen_scale)):
+                if self.card_img3 in deck.current_deck.keys(): deck.current_deck[self.card_img3]+=1
+                else: deck.current_deck[self.card_img3]=1
+                return True
+    
     def draw(self, screen):
+        print(deck.focused_cards)
         self.background.draw(screen,(0, 0))
         # self.draw_clouds(screen)
         if self.mouse_check():
