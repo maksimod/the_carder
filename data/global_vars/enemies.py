@@ -48,7 +48,7 @@ enemies = {
 enemy_buff_index = 'buffs_indexes[current_intention[1]]'
 
 intention_actions = {
-    'D': ['enemies[self.enemy_type][0][1]+'],
+    'D': ['self.enemy_df+'],
     'H': ['enemies[self.enemy_type][0][0]+'],
     'P': ['hero.hero[hero.hero_class][0][-1][hero.debuffs_indexes["poison"]]+'],
     'B': ['enemy_buffs['+enemy_buff_index+']+']
@@ -70,7 +70,8 @@ enemy_intentions = {
 }
 
 level_enemy_types = {
-    1: ['guardian', 'wizard', 'snakes', 'joker'],
+    1: ['wizard&guardian'],
+    # 1: ['guardian', 'wizard', 'snakes', 'joker'],
     2: ['fear', 'fear_ghost', 'flowers', 'flowers2']
     # 3: ['wizard&guardian']
 }

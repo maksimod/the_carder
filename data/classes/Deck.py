@@ -52,7 +52,7 @@ class Deck:
         for i in range(len(self.cards)):
             self.cards[i].set_index(i)
 
-    def play_card(self, src, card):
+    def play_card(self, src, card, enemy_index):
         cost = deck.cards[src][0]
 
         #Check for elements and make actions
@@ -61,23 +61,35 @@ class Deck:
                 #ATTACK ENEMY
                 if action[1] == 'A':
                     attack = int(action[2:])
-                    for el in self.enemy.get_names():
-                        if enemies.enemies[el][0][1] <= 0:
-                            enemies.enemies[el][0][0] -= attack
+                    for el in self.enemy.get_enemies():
+                        if el.enemy_df <= 0:
+                            el.enemy_hp -= attack
                         else:
-                            if enemies.enemies[el][0][1] - attack >= 0:
-                                enemies.enemies[el][0][1] -= attack
+                            if el.enemy_df - attack >= 0:
+                                el.enemy_df -= attack
                             else:
-                                attack -= enemies.enemies[el][0][1]
-                                enemies.enemies[el][0][1] = 0
-                                enemies.enemies[el][0][0] -= attack
+                                attack -= el.enemy_df
+                                el.enemy_df = 0
+                                el.enemy_hp -= attack
                 # elif
             elif action[0] == 'P':
                 if action[1] == 'D':
                     defence = int(action[2:])
                     hero.hero[hero.hero_class][0][1] += defence
-            else:
-                raise NameError('You did not add E support already')
+            elif action[0] == 'E':
+                aim = self.enemy.get_enemies()[enemy_index]
+                if action[1] == 'A':
+                    attack = int(action[2:])
+                    if aim.enemy_df <= 0:
+                        aim.enemy_hp -= attack
+                    else:
+                        if aim.enemy_df - attack >= 0:
+                            aim.enemy_df -= attack
+                        else:
+                            attack -= aim.enemy_df
+                            aim.enemy_df = 0
+                            aim.enemy_hp -= attack
+                # raise NameError('You did not add E support already')
 
         hero.hero[hero.hero_class][0][3] -= cost
 
@@ -87,21 +99,18 @@ class Deck:
         return True
 
     def draw(self):
-        # print(deck.hand_cards_col)
-        
         cards = self.cards
         focused_card_index = -1
         flag = False
         index_rewrite = False
         rewrite_index = -1
         for i in range(len(deck.focused_cards)):
-            # print(deck.focused_cards, i)
             if not (deck.focused_cards[i]):
                 card_pos_x = screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[
                     0].get_width()
                 card_pos_y = screen_size[1] - cards[0].get_height()
-                if cards[i].live((card_pos_x, card_pos_y)) == True:
-                    if self.play_card(cards[i].get_card(), cards[i]):
+                if cards[i].live((card_pos_x, card_pos_y), self.enemy.get_enemies()) == True:
+                    if self.play_card(cards[i].get_card(), cards[i], cards[i].enemy_focus_index):
                         # pass
                         del cards[i]
                         deck.hand_cards_col -= 1
@@ -117,8 +126,8 @@ class Deck:
             card_pos_x = screen_size[0] // 2 - (cards[0].get_width() * deck.hand_cards_col) // 2 + i * cards[
                 0].get_width()
             card_pos_y = screen_size[1] - cards[0].get_height()
-            if cards[i].live((card_pos_x, card_pos_y)) == True:
-                if self.play_card(cards[i].get_card(), cards[i]):
+            if cards[i].live((card_pos_x, card_pos_y), self.enemy.get_enemies()) == True:
+                if self.play_card(cards[i].get_card(), cards[i], cards[i].enemy_focus_index):
                     del cards[i]
                     deck.hand_cards_col -= 1
                     deck.focused_cards = [False for i in range(deck.hand_cards_col)]

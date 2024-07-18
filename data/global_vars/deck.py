@@ -37,9 +37,10 @@ hand_max_cards_col = 6
 #HOW IT COMMAND? BSH5 - increase hero strength by 5; BSA5 - increase all enemies strength by 5
 # first letter - A(all enemies)/E(current enemy)/P(hero action)
 cards = {
-    'attack': [1,'AA6'],
+    'attack': [1,'EA6'],
     'defense': [1,'PD5'],
-    'crushHead': [2, 'AA9', 'ALV2']
+    'crushHead': [2, 'EA9', 'ALV2'],
+    'snowflake': [2, 'AA8']
 }
 
 null_current_deck = {
@@ -75,9 +76,10 @@ cards_view = {
     'defense': ['Gain ' + str(cards['defense'][1][2:]) + ' Block', 'data/images/cards/bercerk/defense.png'],
     'crushHead': ['Attack ' + str(cards['crushHead'][1][2:]) + ' and apply ' + str(cards['crushHead'][2][3:]) +
                  ' Vulnerable to enemy and Block', 'data/images/cards/bercerk/AI/crushHead.jpeg'],
+    'snowflake': ['Attack all enemies by '+str(cards['crushHead'][1][2:]), 'data/images/cards/bercerk/AI/snowflake.jpeg']
 }
 get_cards_depend_hero_class = {
-    'bercerk': ['attack','defense','crushHead']
+    'bercerk': ['attack','crushHead', 'snowflake']
     # 'bercerk': ['crushHead', 'evilDeal', 'bandage', 'ironAttack', 'barricade', 'attackDefense',
     #             'forrager', 'rageAttack', 'rageDefense', 'screamer', 'stranger', 'breakfast', 'myCuteDragon'],
     # 'isolda': ['judje', 'magicIce', 'magicFire', 'magicHypno', 'mysteryPotion', 'darkMagic', 'dead'],

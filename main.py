@@ -21,8 +21,8 @@ running = True
 
 in_menu = False
 in_chose_hero = False
-in_card_chose = False
-in_level_passing = True
+in_card_chose = True
+in_level_passing = False
 
 current_level = 1
 

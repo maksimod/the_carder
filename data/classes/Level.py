@@ -80,7 +80,6 @@ class Level:
         screen.blit(self.background, (0, 0))
 
         if self.next_turn.draw_check_click():
-            # print(deck.hand_cards_col)
             deck.hand_cards_col = deck.hand_max_cards_col
             deck.focused_cards = [False for i in range(deck.hand_cards_col)]
             self.current_enemy.make_turn()

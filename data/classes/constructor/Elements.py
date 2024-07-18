@@ -122,15 +122,11 @@ class Card(Surface):
     def get_card(self):
         return self.card_src
     
-    def collect_src(self):
-        # print(self.card_src)
-        return deck.cards_view[self.card_src][1]
-    
     def collect_src_name(self):
         return self.card_src
     
     def __init__(self, card_src, k, index, card_chose=False, just_show=False):
-        # print(k)
+        
         self.card_chose = card_chose
         self.just_show = just_show
         
@@ -147,7 +143,12 @@ class Card(Surface):
         
         self.card_src = card_src
         
-        img = self.collect_src()
+        img = deck.cards_view[self.card_src][1]
+        self.aim = deck.cards[self.card_src][1][0]
+        self.was_focused = False
+        self.enemy_focus_index = -1
+        print(self.aim)
+        
         default_src = 'data/images/cards/' + hero.hero_class + '/default.png'
         
         self.k = k
@@ -172,7 +173,6 @@ class Card(Surface):
                 self.description_hints.append(Hint(str(el)))
     
     def draw_card_states(self):
-        
         cost = str(deck.cards[self.card_src][0])
         self.cost = cost
         k, big_card_k = self.k * screen_scale * 0.5, self.big_card_k
@@ -217,10 +217,14 @@ class Card(Surface):
                                                                  self.pyb + self.description_hints[
                                                                      0].get_height() * i))
     
-    def live(self, pos):
+    def live(self, pos, enemies=None):
         self.pos = pos
-        if self.draw_check_click(self.card_chose) == 'Play':
-            return True
+        if enemies is not None:
+            if self.draw_check_click(self.card_chose, enemies) == 'Play':
+                return True
+        else:
+            if self.just_draw_check_click(self.card_chose) == 'Play':
+                return  True
         self.draw_card_states()
     
     @staticmethod
@@ -233,7 +237,7 @@ class Card(Surface):
                 surface.scale(ex, 1)
         return surface
     
-    def draw_check_click(self, card_chose, hotkey=None):
+    def draw_check_click(self, card_chose, enemies, hotkey=None):
         bws, bhs = self.surface.get_width(), self.surface.get_height() // 2
         bwb, bhb = self.big.get_width(), self.big.get_height() // 2
         mpx, mpy = pygame.mouse.get_pos()
@@ -264,14 +268,96 @@ class Card(Surface):
             else:
                 deck.focus_freeze = None
                 # check that if card apply to one of all enemies it focused at one of the enemy
-                flag = True
-                for el in deck.cards[self.card_src][1:]:
-                    if 'E' in el:
-                        flag = False
-                        break
-                if flag:
-                    if int(self.cost) <= hero.hero[hero.hero_class][0][3]:
+                if int(self.cost) <= hero.hero[hero.hero_class][0][3]:
+                    pass
+                    if self.aim == 'E':
+                        print("STOOOOOP")
+                        if self.was_focused:
+                            print('WHAAAT')
+                            return 'Play'
+                    else:
                         return 'Play'
+        
+        self.are_pressed = False
+        if not self.focus:
+            # deck.focused_cards[self.index] = False
+            if not self.just_show:
+                if (pxs <= mpx <= pxs + bws) and (pys <= mpy <= pys + bhs * 2):
+                    if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
+                        self.focus = True
+                        deck.current_active_card = self.index
+                else:
+                    self.focus = False
+        else:
+            if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
+                if pygame.mouse.get_pressed()[0]:
+                    if self.aim == 'E':
+                        for i in range(len(enemies)):
+                            if enemies[i].check_focus():
+                                self.was_focused = True
+                                self.enemy_focus_index = i
+                                print('ITS!', enemies[i].enemy_hp)
+                                break
+                            else:
+                                self.was_focused = False
+                    if not card_chose:
+                        pxb, pyb = mpx - bwb // 2, mpy - bhb
+                        self.are_pressed = True
+                        self.was_pressed = True
+                        deck.focus_freeze = self.index
+                    else:
+                        pass
+            if (pxb <= mpx <= pxb + bwb) and (pyb <= mpy <= pyb + bhb * 2):
+                deck.current_active_card = self.index
+                if (deck.focus_freeze == self.index) or deck.focus_freeze is None:
+                    self.focus = True
+            else:
+                self.focus = False
+        
+        if self.index<len(deck.focused_cards):
+            deck.focused_cards[self.index] = self.focus
+        
+        if self.focus:
+            if card_chose: pyb -= self.surface.get_height() // 6
+            self.big.draw((pxb, pyb))
+        else: self.surface.draw((pxs, pys))
+        
+        self.pxb, self.pyb = pxb, pyb
+        self.bws, self.bhs, self.bwb, self.bhb = bws, bhs, bwb, bhb
+    
+    def just_draw_check_click(self, card_chose, hotkey=None):
+        bws, bhs = self.surface.get_width(), self.surface.get_height() // 2
+        bwb, bhb = self.big.get_width(), self.big.get_height() // 2
+        mpx, mpy = pygame.mouse.get_pos()
+        
+        self.real_pos = [self.pos[0], self.pos[1]]
+        
+        # Check that at least one card is active
+        if not self.card_chose:
+            flag = False
+            for el in deck.focused_cards:
+                if el:
+                    flag = True
+                    break
+            if flag:
+                if self.index < deck.current_active_card:
+                    self.real_pos[0] -= (bwb - bws) // 2
+                if self.index > deck.current_active_card:
+                    self.real_pos[0] += (bwb - bws) // 2
+        
+        pxs, pys = self.real_pos
+        pxb, pyb = pxs - (bwb - bws) // 2, screen.get_height() - bhb * 2
+        
+        if not (self.are_pressed) and self.was_pressed:
+            if mpy > pyb:
+                self.are_pressed = False
+                self.was_pressed = False
+                deck.focus_freeze = None
+            else:
+                deck.focus_freeze = None
+                # check that if card apply to one of all enemies it focused at one of the enemy
+                # if int(self.cost) <= hero.hero[hero.hero_class][0][3]:
+                #     return 'Play'
         
         self.are_pressed = False
         if not self.focus:
@@ -300,14 +386,14 @@ class Card(Surface):
             else:
                 self.focus = False
         
-        # print(self.index)
-        if self.index<len(deck.focused_cards):
+        if self.index < len(deck.focused_cards):
             deck.focused_cards[self.index] = self.focus
         
         if self.focus:
             if card_chose: pyb -= self.surface.get_height() // 6
             self.big.draw((pxb, pyb))
-        else: self.surface.draw((pxs, pys))
+        else:
+            self.surface.draw((pxs, pys))
         
         self.pxb, self.pyb = pxb, pyb
         self.bws, self.bhs, self.bwb, self.bhb = bws, bhs, bwb, bhb
