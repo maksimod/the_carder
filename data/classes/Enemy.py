@@ -30,7 +30,9 @@ class Enemies:
         index = 0
         for el in enemy_name:
             self.enemies.append(Enemy(el, index, player))
+            self.enemies[-1].enemies = self
             index += 1
+        self.last_index = index
     
     def get_names(self):
         return self.enemy_name
@@ -70,6 +72,8 @@ class Enemy:
         self.enemy_scale = 0.3
         if 'AI' in enemies[self.enemy_type][3]:
             self.enemy_scale = 0.4
+        if 'slave' in self.enemy_type: self.enemy_scale*=0.5
+
         
         self.enemy_surface = pygame.image.load(enemies[enemy_type][3])
         self.enemy_surface = pygame.transform.scale(self.enemy_surface, (
@@ -153,6 +157,9 @@ class Enemy:
                 self.enemy_df = int(current_intention[1:])
             elif current_intention[0] == 'H': self.enemy_hp += int(current_intention[1:])
             elif current_intention[0] == 'B': self.states[current_intention[:2]] = int(current_intention[2:])
+            elif current_intention[0] == 'S':
+                self.enemies.enemies.append(Enemy(self.enemy_type+'slave', self.enemies.last_index, self.player))
+                self.enemies.last_index += 1
             #apply to hero
             elif current_intention[0] == 'P':
                 self.player.states['LP'] += int(current_intention[1:])

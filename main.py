@@ -1,5 +1,4 @@
 import keyboard
-import pygame
 from sys import exit
 
 from data.classes.MainMenu import Menu
@@ -21,8 +20,8 @@ running = True
 
 in_menu = False
 in_chose_hero = False
-in_card_chose = True
-in_level_passing = False
+in_card_chose = False
+in_level_passing = True
 
 current_level = 1
 
@@ -33,15 +32,10 @@ card_chose_hero = HeroChoseMenu()
 card_chose_menu = CardChooseMenu()
 level_passing = Level(current_level)
 
-
 #hero
 hero_class = 'bercerk'
 
-
-from data.global_vars import hero
-
 while running:
-    print(hero.hero[hero.hero_class][0][0])
     if in_menu:
         menu.draw()
         if (menu.player_action_check()):

@@ -7,7 +7,7 @@ class Line:
                 screen_scale / 1.5 * surface.get_height())
     
     # pars(parameters) = [hp,df,rage]
-    def __init__(self, aim_pos, aim_size, font=None):
+    def __init__(self, aim_pos, aim_size, font=None, k=1):
         self.font = font
         
         self.aim_pos = aim_pos
