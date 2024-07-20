@@ -10,6 +10,20 @@ from data.classes.Level import Level
 from data.global_vars.screen_info import *
 from data.global_functions import restore
 
+# Import the level generator
+from level_generator import LevelGenerator
+
+# Define the dimensions of the underground level
+width, height = 3, 3
+
+# Create a level generator with the desired dimensions
+level_generator = LevelGenerator(width, height)
+rooms = level_generator.get_rooms()
+
+# Print the generated rooms
+for room in rooms:
+    print(room)
+
 pygame.display.set_caption('Carder')
 
 # To control fps
@@ -33,8 +47,7 @@ card_chose_hero = HeroChoseMenu()
 card_chose_menu = CardChooseMenu()
 level_passing = Level(current_level)
 
-
-#hero
+# hero
 hero_class = 'bercerk'
 
 while running:
@@ -72,7 +85,7 @@ while running:
             in_level_passing = False
             menu = Menu()
             restore.null_parameters()
-        elif (res == 'WIN'):
+        elif res == 'WIN':
             current_level += 1
 
             in_level_passing = False
