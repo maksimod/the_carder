@@ -37,7 +37,11 @@ level_passing = Level(current_level)
 #hero
 hero_class = 'bercerk'
 
+
+from data.global_vars import hero
+
 while running:
+    print(hero.hero[hero.hero_class][0][0])
     if in_menu:
         menu.draw()
         if (menu.player_action_check()):

@@ -3,6 +3,8 @@ from random import shuffle
 # Card characteristics:
 hand_cards_col = 6
 hand_max_cards_col = 6
+#cards col to chose
+cards_col_to_chose = 3
 
 # [cost, attack, defense, screen/hero/enemy(0/1/2),
 #   enemy_negatives, enemy_positives, player_negatives, player_positivs]
@@ -29,7 +31,7 @@ hand_max_cards_col = 6
 #B buffs: S - strength (always increase current attack by strength)
 #L debuffs (every turn decreases by 1):
     # V - vulnerable (hero will get x% more damage), PV3  hero will vulnerable 3 turns
-    # B - sleeding (hero will lose (bleeding) hp)
+    # B - bleeding (hero will lose (bleeding) hp)
     # W - attacks will deal 25% less damage
 #P low curse (static, all battle with player, it can increase):
     # F - fragile (1 fragile point = hero will get 1 less defense), PF3 = hero will get 3 less damage every time
@@ -39,7 +41,7 @@ hand_max_cards_col = 6
 cards = {
     'attack': [1,'EA6'],
     'defense': [1,'PD5'],
-    'crushHead': [2, 'EA9', 'ALV2'],
+    'crushHead': [2, 'EA9', 'ELV2'],
     'snowflake': [2, 'AA8']
 }
 

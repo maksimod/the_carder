@@ -38,11 +38,11 @@ class Level:
         background_path = current_level_parameters[0][rand_level_back]
         self.music = current_level_parameters[1][randint(0, len(current_level_parameters[1])-1)]
 
+        self.player = Hero(hero.hero_class)
+        
         get_enemies_by_level = enemies.level_enemy_types[current_level]
         self.enemy_name = get_enemies_by_level[randint(0, len(get_enemies_by_level)-1)]
-        self.current_enemy = Enemies(self.enemy_name)
-
-        self.player = Hero(hero.hero_class)
+        self.current_enemy = Enemies(self.enemy_name, self.player)
 
         #Creating serfaces to make opportunity to put them on the screen
         self.background = pygame.image.load(background_path)
@@ -66,15 +66,6 @@ class Level:
         #create a deck
         self.playerDeck = Deck(self.current_enemy, self.player)
 
-    def check_win(self):
-        mp = pygame.mouse.get_pos()
-        if mp[0]<50 and mp[1]<50:
-            return 1
-        elif mp[0]>self.w-50 and mp[1]>self.h-50:
-            return 0
-        else:
-            return -1
-
     def draw(self):
         screen = screen_info[0]
         screen.blit(self.background, (0, 0))
@@ -91,7 +82,7 @@ class Level:
         if self.output.draw_check_click():
             self.output_was_pressed = True
 
-        if hero.hero[hero.hero_class][0][0]<=0:
+        if self.player.hero_hp_mp[0]<=0:
             del self.playerDeck
             return 'DEFEAT'
         #If ALL enemies (not slaves) were dead:

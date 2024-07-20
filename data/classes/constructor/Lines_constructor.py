@@ -16,16 +16,13 @@ class Line:
         self.h = screen_size[1]
         self.w = screen_size[0]
     
-    def draw(self, pars, mirror=False):
+    def draw(self, hp_max_hp_def, mirror=False):
         aim_pos, aim_size = self.aim_pos, self.aim_size
         font = self.font
         
-        self.hero_states = pars[0]
-        self.hero_max_states = pars[1]
-        self.df = self.hero_states[1]
-        if len(self.hero_states) > 2: self.rage = self.hero_states[2]
-        chp = self.hero_states[0]
-        mhp = self.hero_max_states[0]
+        chp = hp_max_hp_def[0]
+        mhp = hp_max_hp_def[1]
+        self.df = hp_max_hp_def[2]
         
         if not font:
             font = pygame.font.Font(None, int(30 * screen_scale))

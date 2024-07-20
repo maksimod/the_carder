@@ -147,7 +147,6 @@ class Card(Surface):
         self.aim = deck.cards[self.card_src][1][0]
         self.was_focused = False
         self.enemy_focus_index = -1
-        print(self.aim)
         
         default_src = 'data/images/cards/' + hero.hero_class + '/default.png'
         
@@ -269,11 +268,8 @@ class Card(Surface):
                 deck.focus_freeze = None
                 # check that if card apply to one of all enemies it focused at one of the enemy
                 if int(self.cost) <= hero.hero[hero.hero_class][0][3]:
-                    pass
                     if self.aim == 'E':
-                        print("STOOOOOP")
                         if self.was_focused:
-                            print('WHAAAT')
                             return 'Play'
                     else:
                         return 'Play'
@@ -296,7 +292,6 @@ class Card(Surface):
                             if enemies[i].check_focus():
                                 self.was_focused = True
                                 self.enemy_focus_index = i
-                                print('ITS!', enemies[i].enemy_hp)
                                 break
                             else:
                                 self.was_focused = False
@@ -355,9 +350,6 @@ class Card(Surface):
                 deck.focus_freeze = None
             else:
                 deck.focus_freeze = None
-                # check that if card apply to one of all enemies it focused at one of the enemy
-                # if int(self.cost) <= hero.hero[hero.hero_class][0][3]:
-                #     return 'Play'
         
         self.are_pressed = False
         if not self.focus:

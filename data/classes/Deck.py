@@ -58,38 +58,26 @@ class Deck:
         #Check for elements and make actions
         for action in deck.cards[src][1:]:
             if action[0] == 'A':
-                #ATTACK ENEMY
+                #ATTACK ALL ENEMIES
                 if action[1] == 'A':
                     attack = int(action[2:])
                     for el in self.enemy.get_enemies():
-                        if el.enemy_df <= 0:
-                            el.enemy_hp -= attack
-                        else:
-                            if el.enemy_df - attack >= 0:
-                                el.enemy_df -= attack
-                            else:
-                                attack -= el.enemy_df
-                                el.enemy_df = 0
-                                el.enemy_hp -= attack
+                        el.get_damage(attack)
+                else:
+                    for el in self.enemy.get_enemies():
+                        el.states[action[1:3]] = int(action[3:])
                 # elif
             elif action[0] == 'P':
                 if action[1] == 'D':
                     defence = int(action[2:])
-                    hero.hero[hero.hero_class][0][1] += defence
+                    self.player.df += defence
             elif action[0] == 'E':
                 aim = self.enemy.get_enemies()[enemy_index]
                 if action[1] == 'A':
                     attack = int(action[2:])
-                    if aim.enemy_df <= 0:
-                        aim.enemy_hp -= attack
-                    else:
-                        if aim.enemy_df - attack >= 0:
-                            aim.enemy_df -= attack
-                        else:
-                            attack -= aim.enemy_df
-                            aim.enemy_df = 0
-                            aim.enemy_hp -= attack
-                # raise NameError('You did not add E support already')
+                    aim.get_damage(attack)
+                else:
+                    aim.states[action[1:3]] = int(action[3:])
 
         hero.hero[hero.hero_class][0][3] -= cost
 
