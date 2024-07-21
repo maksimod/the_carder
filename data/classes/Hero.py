@@ -61,11 +61,11 @@ class Hero:
         }
 
     def make_turn(self):
-        if (self.df > 0):
-            self.defense_was_done = True
+        # if (self.df > 0):
+        #     self.defense_was_done = True
         
         # self.current_mp = self.max_mp
-        hero.hero[hero.hero_class][0][3] = hero.hero[hero.hero_class][1][1]
+        self.hero_hp_mp[3] = hero.hero[hero.hero_class][1][1]
 
         if self.can_poison:
             self.hero_hp_mp[0] -= self.previous_poison
@@ -76,13 +76,7 @@ class Hero:
             self.previous_poison = self.states['LP']
         
         # Delete defense
-        if self.defense_was_done:
-            if self.defense_was_waited:
-                self.enemy_df = 0
-                self.defense_was_done = False
-                self.defense_was_waited = False
-            else:
-                self.defense_was_waited = True
+        self.df = 0
         
         # LOW ALL DEBUFF BY 1
         print('OK')

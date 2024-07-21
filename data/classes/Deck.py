@@ -18,7 +18,7 @@ class Deck:
 
         #convert card names to real cards!
         for i in range(len(deck.input)):
-            deck.input[i] = Card(deck.input[i], k, i)
+            deck.input[i] = Card(deck.input[i], k, i, player=player)
 
         self.cards = []
         for i in range(deck.hand_cards_col):
@@ -79,7 +79,7 @@ class Deck:
                 else:
                     aim.states[action[1:3]] = int(action[3:])
 
-        hero.hero[hero.hero_class][0][3] -= cost
+        self.player.hero_hp_mp[3] -= cost
 
         deck.output.append(card)
         deck.cards_output+=1

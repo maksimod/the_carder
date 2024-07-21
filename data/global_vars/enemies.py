@@ -5,7 +5,7 @@ enemies = {
     'wizard' : [[50,0],[50],['A20', 'D12', 'A13','H18'],'data/images/enemies/wizard.png'],
     'snakes' : [[50,0],[50],['P5','H10'],'data/images/enemies/snakes.png'],
     'joker' : [[40,0],[40],['S ','A10', 'D15'], 'data/images/enemies/joker.png'],
-    'jokerslave':[[20,2],[20],['A6', 'D5', 'MH9', 'H10'], 'data/images/enemies/jokerslave.png'],
+    'jokerslave':[[20,0],[20],['A6', 'D5', 'MH9', 'H10'], 'data/images/enemies/jokerslave.png'],
     'fear': [[60, 0], [60], ['BS3', 'A1'], 'data/images/enemies/AI/fear.png'],
     'fear_ghost': [[50, 0], [50], ['LV3', 'A15', 'A12', 'A9', 'D10'], 'data/images/enemies/AI/fear_ghost.png'],
     'flowers': [[50, 0], [50], ['PF2', 'A12','LV2', 'A10', 'BS2'], 'data/images/enemies/AI/flowers.png'],

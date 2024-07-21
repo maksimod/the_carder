@@ -15,6 +15,8 @@ class Line:
         
         self.h = screen_size[1]
         self.w = screen_size[0]
+        
+        self.k = k
     
     def draw(self, hp_max_hp_def, mirror=False):
         aim_pos, aim_size = self.aim_pos, self.aim_size
@@ -34,7 +36,7 @@ class Line:
         self.hero_df_text_w = self.hero_df_text_surface.get_width()
         self.hero_df_text_h = self.hero_df_text_surface.get_height()
         
-        r_scrn_scl = screen_scale * 0.8
+        r_scrn_scl = screen_scale * 0.8 * self.k
         hp_line_surface = pygame.image.load('data/images\\elements\\hp_def\\hp_line.png')
         hp_line_surface = pygame.transform.scale(hp_line_surface, (
         hp_line_surface.get_width() * r_scrn_scl, hp_line_surface.get_height() * r_scrn_scl))

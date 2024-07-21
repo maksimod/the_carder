@@ -29,7 +29,7 @@ class Enemies:
         self.enemies = []
         index = 0
         for el in enemy_name:
-            self.enemies.append(Enemy(el, index, player))
+            self.enemies.append(Enemy(el, index, player, (750 * screen_scale - index * 400 * screen_scale, 230 * screen_scale)))
             self.enemies[-1].enemies = self
             index += 1
         self.last_index = index
@@ -52,7 +52,7 @@ class Enemies:
 
 
 class Enemy:
-    def __init__(self, enemy_type, index, player):
+    def __init__(self, enemy_type, index, player, enemy_position):
         self.player = player
         #to delete defense after turn
         self.defense_was_done = False
@@ -69,11 +69,15 @@ class Enemy:
         self.enemy_df = enemies[self.enemy_type][0][1]
         self.enemy_intentions = enemies[self.enemy_type][1]
         
-        self.enemy_scale = 0.3
+        self.enemy_scale = 1
+        self.x_offset = 0
+        if self.enemy_type == 'guardian' or self.enemy_type == 'snakes' or self.enemy_type == 'wizard' or self.enemy_type == 'joker':
+            self.enemy_scale = 0.3
         if 'AI' in enemies[self.enemy_type][3]:
             self.enemy_scale = 0.4
-        if 'slave' in self.enemy_type: self.enemy_scale*=0.5
-
+        if 'slave' in self.enemy_type:
+            self.enemy_scale*=0.2
+            self.x_offset = 50*screen_scale
         
         self.enemy_surface = pygame.image.load(enemies[enemy_type][3])
         self.enemy_surface = pygame.transform.scale(self.enemy_surface, (
@@ -83,10 +87,11 @@ class Enemy:
         self.enemy_size = self.enemy_surface.get_size()
         self.enemy_type = enemy_type
         
-        self.enemy_position = (750 * screen_scale - index * 400 * screen_scale, 230 * screen_scale)
+        #enemy pos must also depends on another enemies
+        self.enemy_position = enemy_position
         
         # initialize enemy hp df rage line
-        self.enemy_line = Line(self.enemy_position, self.enemy_surface.get_size())
+        self.enemy_line = Line(self.enemy_position, self.enemy_surface.get_size(), k=self.enemy_scale*3)
         
         self.focus_img = Img('data/images/elements/enemy_countur.png', k=0.2)
         
@@ -158,7 +163,14 @@ class Enemy:
             elif current_intention[0] == 'H': self.enemy_hp += int(current_intention[1:])
             elif current_intention[0] == 'B': self.states[current_intention[:2]] = int(current_intention[2:])
             elif current_intention[0] == 'S':
-                self.enemies.enemies.append(Enemy(self.enemy_type+'slave', self.enemies.last_index, self.player))
+                #to understand slave size
+                slave_surface = pygame.image.load('data/images/enemies/jokerslave.png')
+                x_offset = 40*screen_scale
+                y_offset = 60*screen_scale
+                
+                slave_pos_x = self.enemies.enemies[-1].enemy_position[0]-slave_surface.get_width()*0.3-x_offset
+                slave_pos_y = self.enemies.enemies[-1].enemy_position[1]+y_offset
+                self.enemies.enemies.append(Enemy(self.enemy_type+'slave', self.enemies.last_index, self.player, (slave_pos_x,slave_pos_y)))
                 self.enemies.last_index += 1
             #apply to hero
             elif current_intention[0] == 'P':
@@ -169,17 +181,17 @@ class Enemy:
                 # Add strength to attack
                 attack += self.states['BS']
                 
-                hero_hp = self.player.hero_hp_mp[0]
-                hero_df = self.player.hero_hp_mp[3]
+                # hero_hp = self.player.hero_hp_mp[0]
+                # hero_df = self.player.hero_hp_mp[3]
                 
-                if hero_df <= 0:
-                    hero_hp -= attack
-                elif hero_df >= attack:
-                    hero_df -= attack
+                if self.player.df <= 0:
+                    self.player.hero_hp_mp[0] = self.player.hero_hp_mp[0] - attack
+                elif self.player.df >= attack:
+                    self.player.df = self.player.df - attack
                 else:
-                    attack -= hero_df
-                    hero_df = 0
-                    hero_hp -= attack
+                    attack = attack - self.player.df
+                    self.player.df = 0
+                    self.player.hero_hp_mp[0] = self.player.hero_hp_mp[0] - attack
             else:
                 raise ValueError('NOT STATED')
         
@@ -254,7 +266,7 @@ class Enemy:
     
     def draw_enemy(self):
         self.check_focus()
-        screen.blit(self.enemy_surface, self.enemy_position)
+        screen.blit(self.enemy_surface, (self.enemy_position[0]+self.x_offset, self.enemy_position[1]))
         
         pars = [self.enemy_hp, self.enemy_max_hp, self.enemy_df]
         self.enemy_line.draw(pars, mirror=True)

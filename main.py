@@ -36,6 +36,7 @@ level_passing = Level(current_level)
 hero_class = 'bercerk'
 
 while running:
+    print(pygame.mouse.get_pos())
     if in_menu:
         menu.draw()
         if (menu.player_action_check()):

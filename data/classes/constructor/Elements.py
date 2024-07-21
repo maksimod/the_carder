@@ -125,7 +125,8 @@ class Card(Surface):
     def collect_src_name(self):
         return self.card_src
     
-    def __init__(self, card_src, k, index, card_chose=False, just_show=False):
+    def __init__(self, card_src, k, index, player=None, card_chose=False, just_show=False):
+        self.player = player
         
         self.card_chose = card_chose
         self.just_show = just_show
@@ -267,7 +268,7 @@ class Card(Surface):
             else:
                 deck.focus_freeze = None
                 # check that if card apply to one of all enemies it focused at one of the enemy
-                if int(self.cost) <= hero.hero[hero.hero_class][0][3]:
+                if int(self.cost) <= self.player.hero_hp_mp[3]:
                     if self.aim == 'E':
                         if self.was_focused:
                             return 'Play'
