@@ -37,3 +37,19 @@ level_enemy_types = {
     2: ['fear', 'fear_ghost', 'flowers', 'flowers2']
     # 3: ['wizard&guardian']
 }
+
+enemy_states = {
+    # buffs: strength, mp increase (just to next turn)
+    'BS': ['data/images/elements/states/positive/strength.png'],
+    # Talents: barricade, dexterity
+    'TB': ['data/images/elements/states/talents/barricade.png'],
+    'TD': ['data/images/elements/states/talents/dexterity.png'],
+    # debuffs: vulnerable, bleeding, weak, poison, fragile
+    'LV': ['data/images/elements/states/negative/vulnerable.png'],
+    'LB': None,
+    'LW': ['data/images/elements/states/negative/weak.png'],
+    'LP': ['data/images/elements/states/negative/poison.png'],
+    'LF': ['data/images/elements/states/negative/fragility.png'],
+    # low curses: anti-dexterity
+    'PD': None
+}

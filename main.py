@@ -36,7 +36,6 @@ level_passing = Level(current_level)
 hero_class = 'bercerk'
 
 while running:
-    print(pygame.mouse.get_pos())
     if in_menu:
         menu.draw()
         if (menu.player_action_check()):
@@ -45,7 +44,6 @@ while running:
             # Go to 1st level, create a player
             level_passing = Level(current_level)
             del menu
-            print('OK')
     elif in_chose_hero:
         hero_chose_menu.draw()
         if hero_chose_menu.player_action_check():
@@ -56,7 +54,6 @@ while running:
             del hero_chose_menu
     elif in_card_chose:
         if card_chose_menu.draw():
-            print("OK")
             in_card_chose = False
             in_level_passing = True
 
@@ -89,5 +86,3 @@ while running:
             exit()
     if keyboard.is_pressed('q'):
         running = False
-
-print('OK!')

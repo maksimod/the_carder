@@ -42,14 +42,15 @@ class Hero:
         # initialize hero hp df rage line
         self.hero_line = Line(hero_position, self.player_surface.get_size())
         
-        self.hero_mp_img = Img('data/images/elements/mp/bercerk_mp.png', k=0.4*screen_scale)
+        self.hero_mp_img = Img('data/images/elements/mp/bercerk_mp.png', k=0.6)
         
         self.states = {
             #buffs: strength, mp increase (just to next turn)
             'BS': 0,
             'BI': 0,
-            #Talents: barricade
+            #Talents: barricade, dexterity
             'TB': 0,
+            'TD': 0,
             #debuffs: vulnerable, bleeding, weak, poison, fragile
             'LV': 0,
             'LB': 0,
@@ -79,14 +80,14 @@ class Hero:
         self.df = 0
         
         # LOW ALL DEBUFF BY 1
-        print('OK')
+        # print('OK')
         for el in self.states:
-            print(el)
-            print('el[0] is', el[0])
+            # print(el)
+            # print('el[0] is', el[0])
             if el[0] == 'L':
                 if int(self.states[el]) > 0:
                     self.states[el] = self.states[el] - 1
-                    print('NOW', self.states[el])
+                    # print('NOW', self.states[el])
 
     def draw_hero_text(self):
         hero_poison_text_surface = self.hero_poison_text.render(

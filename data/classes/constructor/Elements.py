@@ -5,6 +5,7 @@ from data.global_vars.button_focus import menu_buttons
 
 from data.global_vars.screen_info import *
 
+
 class Surface:
     def get_size(self):
         return self.surface.get_size()
@@ -159,17 +160,25 @@ class Card(Surface):
         self.big.scale(self.big, k * self.big_card_k)
         
         # create hints
-        description = deck.cards_view[self.card_src][0]
+        description_text = deck.cards_view[self.card_src][0]
         
         # add description
-        description_k = 0.5
-        local_k = self.k * screen_scale * 0.5
-        self.description = CText(description, k=description_k * local_k, str_symbols=19)
-        self.f_description = CText(description, k=description_k * local_k * self.big_card_k, str_symbols=19)
+        self.description_k = 0.5
+        self.desc_local_k = self.k * screen_scale * 0.5
+        
+        self.default_description_text = description_text
+        
+        self.description = CText(description_text, k=self.description_k * self.desc_local_k, str_symbols=19)
+        self.f_description = CText(description_text, k=self.description_k * self.desc_local_k * self.big_card_k,
+                                   str_symbols=19)
+        
+        # description flexible parametrs
+        self.flex_attack = deck.flex_pars[card_src].get('A', None)
+        print('flex_attack =', self.flex_attack)
         
         self.description_hints = []
         for el in deck.described_characteristics:
-            if el in description:
+            if el in description_text:
                 self.description_hints.append(Hint(str(el)))
     
     def draw_card_states(self):
@@ -214,8 +223,8 @@ class Card(Surface):
             if len(self.description_hints) != 0:
                 for i in range(len(self.description_hints)):
                     self.description_hints[i].draw((self.pxb + self.big.get_width() + offset,
-                                                                 self.pyb + self.description_hints[
-                                                                     0].get_height() * i))
+                                                    self.pyb + self.description_hints[
+                                                        0].get_height() * i))
     
     def live(self, pos, enemies=None):
         self.pos = pos
@@ -224,7 +233,7 @@ class Card(Surface):
                 return True
         else:
             if self.just_draw_check_click(self.card_chose) == 'Play':
-                return  True
+                return True
         self.draw_card_states()
     
     @staticmethod
@@ -291,10 +300,31 @@ class Card(Surface):
                     if self.aim == 'E':
                         for i in range(len(enemies)):
                             if enemies[i].check_focus():
+                                # check enemy states, change card text
+                                if enemies[i].states['LV'] > 0:
+                                    if self.flex_attack is not None:
+                                        print('OK!')
+                                        # create hints
+                                        description_text = deck.cards_view[self.card_src][0]
+                                        
+                                        
+                                        find_attack_start = description_text.lower().find('deal')+5
+                                        len_attack = len(str(self.flex_attack * 1.5))
+                                        
+                                        print(find_attack_start)
+                                        
+                                        description_text = description_text[:find_attack_start] + str(self.flex_attack * 1.5) + description_text[
+                                                               find_attack_start - 2 + len_attack:]
+                                        
+                                        self.f_description.set_flex_text(description_text,[0,255,0],[find_attack_start,find_attack_start+len_attack])
+                                
                                 self.was_focused = True
                                 self.enemy_focus_index = i
+                                
                                 break
                             else:
+                                self.f_description.set_text(self.default_description_text)
+                                
                                 self.was_focused = False
                     if not card_chose:
                         pxb, pyb = mpx - bwb // 2, mpy - bhb
@@ -310,13 +340,14 @@ class Card(Surface):
             else:
                 self.focus = False
         
-        if self.index<len(deck.focused_cards):
+        if self.index < len(deck.focused_cards):
             deck.focused_cards[self.index] = self.focus
         
         if self.focus:
             if card_chose: pyb -= self.surface.get_height() // 6
             self.big.draw((pxb, pyb))
-        else: self.surface.draw((pxs, pys))
+        else:
+            self.surface.draw((pxs, pys))
         
         self.pxb, self.pyb = pxb, pyb
         self.bws, self.bhs, self.bwb, self.bhb = bws, bhs, bwb, bhb
@@ -405,8 +436,17 @@ class Text(Surface):
 
 class CText(Surface):
     def __init__(self, text, k=1, font=None, color=[255, 255, 255], sysFont=None, str_symbols=None, card_descr=False):
+        self.was_flexed = False
+        
+        self.k = k
+        self.font = font
+        self.color = color
+        self.sysFont = sysFont
         self.str_symbols = str_symbols
-        text = str(text)
+        self.card_descr = card_descr
+        
+        self.text = str(text)
+        text = self.text
         
         if font is None and sysFont is None: sysFont = 'arial'
         
@@ -450,13 +490,93 @@ class CText(Surface):
         
         else:
             self.surface = text_font.render(text, False, color)
+        
+        self.text_font = text_font
+    
+    
+    def set_flex_text(self, flex_text, flex_color, slice):
+        self.text = flex_text
+        
+        self.was_flexed = True
+        
+        self.flex_texts = []
+        
+        text_start = self.text_font.render(self.text[:slice[0]], False, self.color)
+        text_flex = self.text_font.render(self.text[slice[0]:slice[1]], False, flex_color)
+        text_end = self.text_font.render(self.text[slice[1]:], False, self.color)
+        
+        self.flex_texts.append(text_start)
+        self.flex_texts.append(text_flex)
+        self.flex_texts.append(text_end)
+    
+    def set_text(self, text):
+        self.was_flexed = False
+        
+        k = self.k
+        font = self.font
+        color = self.color
+        sysFont = self.sysFont
+        str_symbols = self.str_symbols
+        card_descr = self.card_descr
+        
+        self.text = str(text)
+        
+        if font is None and sysFont is None: sysFont = 'arial'
+        
+        text_font = pygame.font.Font('data/text_fonts/menu_font.otf', int(150 * k))
+        if font is not None:
+            text_font = pygame.font.Font(font, int(150 * k))
+        elif sysFont is not None:
+            text_font = pygame.font.SysFont(font, int(150 * k))
+        
+        if str_symbols is not None:
+            max_str_sumb = str_symbols
+            self.texts = []
+            
+            words = text.split(' ')
+            while words:
+                if card_descr:
+                    summ_len = len(words[0])
+                    self.texts.append(text_font.render(text[:summ_len], False, [235, 185, 55]))
+                    text = text[summ_len:]
+                    words.pop(0)
+                    card_descr = False
+                    continue
+                
+                counter = 0
+                summ_len = 0
+                while summ_len < max_str_sumb:
+                    if len(words) - 1 >= counter:
+                        summ_len += len(words[counter]) + 1
+                        counter += 1
+                    else:
+                        break
+                while summ_len > max_str_sumb:
+                    counter -= 1
+                    summ_len = summ_len - len(str(words[counter])) - 1
+                
+                self.texts.append(text_font.render(text[:summ_len], False, color))
+                text = text[summ_len:]
+                for i in range(counter): words.pop(0)
+            
+            self.texts.append(text_font.render(text, False, color))
+        
+        else:
+            print('text =',text)
+            self.surface = text_font.render(str(text), False, color)
     
     def draw(self, pos):
-        if self.str_symbols is not None:
-            for i in range(len(self.texts)):
-                screen.blit(self.texts[i], (pos[0], pos[1] + self.texts[i].get_height() * i * screen_scale * 0.8))
+        if self.was_flexed == True:
+            last_pos_x=pos[0]
+            for surface in self.flex_texts:
+                screen.blit(surface, (last_pos_x,pos[1]))
+                last_pos_x+=surface.get_width()
         else:
-            screen.blit(self.surface, pos)
+            if self.str_symbols is not None:
+                for i in range(len(self.texts)):
+                    screen.blit(self.texts[i], (pos[0], pos[1] + self.texts[i].get_height() * i * screen_scale * 0.8))
+            else:
+                screen.blit(self.surface, pos)
 
 
 class Button:
@@ -525,7 +645,7 @@ class TextButton(Button):
             self.light_surface.draw((
                 px + (self.surface.get_width() - self.light_surface.get_width()) / 2,
                 py - bh + (self.surface.get_height() - self.light_surface.get_height()) / 2)
-                                    )
+            )
             if pygame.mouse.get_pressed()[0]:
                 self.light_surface = self.make_size('S', self.light_surface, self.surface)
                 self.was_pressed = True
@@ -575,7 +695,7 @@ class TextButton(Button):
             self.light_surface.draw((
                 px + (self.surface.get_width() - self.light_surface.get_width()) / 2,
                 py - bh + (self.surface.get_height() - self.light_surface.get_height()) / 2)
-                                    )
+            )
 
 
 class ImgButton(Button, Surface):
@@ -598,7 +718,7 @@ class ImgButton(Button, Surface):
             self.surface_light.draw((
                 px + (self.surface.get_width() - self.surface_light.get_width()) // 2,
                 py - bh + (self.surface.get_height() - self.surface_light.get_height()) // 2)
-                                    )
+            )
             if pygame.mouse.get_pressed()[0]:
                 self.surface_light = self.make_size('S', self.surface_light, ex=self.surface)
                 self.was_pressed = True

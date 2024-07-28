@@ -8,11 +8,15 @@ from time import *
 
 from data.global_vars import hero
 
-from data.classes.constructor.Elements import Img, Text
+from data.classes.constructor.Elements import Img, Text, CText
 
 
 class Enemies:
     def __init__(self, enemy_types, player):
+        
+        x = 200
+        
+        
         enemy_name = []
         start_ind = 0
         end_ind = -1
@@ -29,7 +33,7 @@ class Enemies:
         self.enemies = []
         index = 0
         for el in enemy_name:
-            self.enemies.append(Enemy(el, index, player, (750 * screen_scale - index * 400 * screen_scale, 230 * screen_scale)))
+            self.enemies.append(Enemy(el, index, player, (750 * screen_scale - index * 400 * screen_scale, x * screen_scale)))
             self.enemies[-1].enemies = self
             index += 1
         self.last_index = index
@@ -102,8 +106,9 @@ class Enemy:
         self.states = {
             # buffs: strength, mp increase (just to next turn)
             'BS': 0,
-            # Talents: barricade
+            # Talents: barricade, dexterity
             'TB': 0,
+            'TD': 0,
             # debuffs: vulnerable, bleeding, weak, poison, fragile
             'LV': 0,
             'LB': 0,
@@ -113,6 +118,40 @@ class Enemy:
             # low curses: anti-dexterity
             'PD': 0
         }
+        
+        state_image_k = 0.1
+        self.states_img = {
+            # buffs: strength, mp increase (just to next turn)
+            'BS': 0,
+            # Talents: barricade, dexterity
+            'TB': 0,
+            'TD': 0,
+            # debuffs: vulnerable, bleeding, weak, poison, fragile
+            'LV': Img('data/images/elements/states/negative/vulnerable.png', state_image_k),
+            'LB': 0,
+            'LW': 0,
+            'LP': 0,
+            'LF': 0,
+            # low curses: anti-dexterity
+            'PD': 0
+        }
+        state_text_k = 0.2
+        self.states_text = {
+            # buffs: strength, mp increase (just to next turn)
+            'BS': 0,
+            # Talents: barricade, dexterity
+            'TB': 0,
+            'TD': 0,
+            # debuffs: vulnerable, bleeding, weak, poison, fragile
+            'LV': CText('009', k=state_text_k),
+            'LB': 0,
+            'LW': 0,
+            'LP': 0,
+            'LF': 0,
+            # low curses: anti-dexterity
+            'PD': 0
+        }
+        
     
     def check_focus(self):
         mx, my = pygame.mouse.get_pos()
@@ -209,14 +248,10 @@ class Enemy:
                 self.defense_was_waited = True
         
         #LOW ALL DEBUFF BY 1
-        print('OK')
         for el in self.states:
-            print(el)
-            print('el[0] is', el[0])
             if el[0]=='L':
                 if int(self.states[el])>0:
                     self.states[el] = self.states[el] - 1
-                    print('NOW', self.states[el])
     
     def draw_enemy_intention(self):
         # down to zero
@@ -264,7 +299,26 @@ class Enemy:
                 intentions_pos[1] + intention.get_height() // 2 - self.intention_text.get_height() // 2)
             )
     
+    def draw_states(self):
+        #draw states
+        for el in self.states_img.keys():
+            if self.states[el]!=0:
+                pos = (self.enemy_position[0], self.enemy_position[1]+self.enemy_surface.get_height())
+                # draw state img
+                self.states_img[el].draw(pos)
+                #draw state text
+                self.states_text[el].set_text(self.states[el])
+                
+                text_pos_x = pos[0]+self.states_img[el].get_width()//2 - self.states_text[el].get_width()//2
+                text_pos_y = pos[1]+self.states_img[el].get_height()//2 - self.states_text[el].get_height()//2
+                text_pos = (text_pos_x, text_pos_y)
+                
+                self.states_text[el].draw(text_pos)
+            
+    
     def draw_enemy(self):
+        # print(self.enemy_hp)
+        
         self.check_focus()
         screen.blit(self.enemy_surface, (self.enemy_position[0]+self.x_offset, self.enemy_position[1]))
         
@@ -272,6 +326,8 @@ class Enemy:
         self.enemy_line.draw(pars, mirror=True)
         
         self.draw_enemy_intention()
+        
+        self.draw_states()
     
     def get_type(self):
         return self.enemy_type

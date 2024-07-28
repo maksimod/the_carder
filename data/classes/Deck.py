@@ -1,3 +1,5 @@
+import time
+
 from data.classes.constructor.Elements import Card
 from data.global_vars.screen_info import *
 from data.global_vars import deck, hero, enemies
@@ -75,6 +77,7 @@ class Deck:
                 aim = self.enemy.get_enemies()[enemy_index]
                 if action[1] == 'A':
                     attack = int(action[2:])
+                    # print(f'attack = {attack}')
                     aim.get_damage(attack)
                 else:
                     aim.states[action[1:3]] = int(action[3:])
