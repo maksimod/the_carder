@@ -84,7 +84,7 @@ cards_input = len(input)
 cards_output = 0
 
 described_characteristics = {
-    'Vulnerable': 'Target will get 25% more damage',
+    'Vulnerable': 'Target will get 50% more damage',
     'Block': 'Untill next turn, prevents damage'
 }
 
@@ -110,5 +110,5 @@ get_cards_depend_hero_class = {
 }
 
 current_active_card = 0
-focused_cards = [False for i in range(hand_cards_col)]
+focused_cards = [False for _ in range(hand_cards_col)]
 focus_freeze = None

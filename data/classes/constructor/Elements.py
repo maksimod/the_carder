@@ -174,7 +174,6 @@ class Card(Surface):
         
         # description flexible parametrs
         self.flex_attack = deck.flex_pars[card_src].get('A', None)
-        print('flex_attack =', self.flex_attack)
         
         self.description_hints = []
         for el in deck.described_characteristics:
@@ -303,15 +302,12 @@ class Card(Surface):
                                 # check enemy states, change card text
                                 if enemies[i].states['LV'] > 0:
                                     if self.flex_attack is not None:
-                                        print('OK!')
                                         # create hints
                                         description_text = deck.cards_view[self.card_src][0]
                                         
                                         
                                         find_attack_start = description_text.lower().find('deal')+5
                                         len_attack = len(str(self.flex_attack * 1.5))
-                                        
-                                        print(find_attack_start)
                                         
                                         description_text = description_text[:find_attack_start] + str(self.flex_attack * 1.5) + description_text[
                                                                find_attack_start - 2 + len_attack:]
@@ -562,7 +558,6 @@ class CText(Surface):
             self.texts.append(text_font.render(text, False, color))
         
         else:
-            print('text =',text)
             self.surface = text_font.render(str(text), False, color)
     
     def draw(self, pos):

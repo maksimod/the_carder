@@ -25,6 +25,9 @@ def restore_deck_parameters():
 
     deck.cards_input = len(deck.input)
     deck.cards_output = 0
+    deck.hand_cards_col = deck.hand_max_cards_col
+    
+    deck.focused_cards = [False for _ in range(deck.hand_cards_col)]
 
 def null_parameters():
     null_deck_parameters()

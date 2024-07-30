@@ -18,31 +18,40 @@ level_passing = None
 
 running = True
 
-in_menu = False
+in_menu = True
 in_chose_hero = False
 in_card_chose = False
-in_level_passing = True
+in_level_passing = False
 
 current_level = 1
 
 pygame.init()
 
 menu = Menu()
-card_chose_hero = HeroChoseMenu()
-card_chose_menu = CardChooseMenu()
-level_passing = Level(current_level)
+# hero_chose_menu = HeroChoseMenu()
+# card_chose_menu = CardChooseMenu()
+# level_passing = Level(current_level)
 
 #hero
 hero_class = 'bercerk'
 
+
+
+# from data.classes.Animation import Animation
+# my_anim = Animation(38,  30,  "data/animations/mp", (300, 300))
+# my_anim.draw()
+import time
 while running:
+    
     if in_menu:
         menu.draw()
         if (menu.player_action_check()):
             in_menu = False
-            in_level_passing = True
+            in_chose_hero = True
             # Go to 1st level, create a player
-            level_passing = Level(current_level)
+
+            hero_chose_menu = HeroChoseMenu()
+            # level_passing = Level(current_level)
             del menu
     elif in_chose_hero:
         hero_chose_menu.draw()
@@ -86,3 +95,12 @@ while running:
             exit()
     if keyboard.is_pressed('q'):
         running = False
+    
+    
+    
+    
+    # for evt in pygame.event.get():
+    #     if evt.type == QUIT or (evt.type == KEYDOWN and evt.key == K_ESCAPE):
+    #         sys.exit()
+    
+    # my_anim.draw()

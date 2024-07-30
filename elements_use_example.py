@@ -59,8 +59,8 @@ while running:
     myCText.draw((100, 400))
     
     #place buttons
-    if myTextButton.draw_check_click(): print('CLICKED TEXT BUTTON!')
-    if myImgButton.draw_check_click(): print('CLICKED IMG BUTTON!')
+    if myTextButton.draw_check_click(): pass
+    if myImgButton.draw_check_click(): pass
     
     
     # Updating display, control fps
@@ -74,5 +74,3 @@ while running:
             exit()
     if keyboard.is_pressed('q'):
         running = False
-
-print('OK!')

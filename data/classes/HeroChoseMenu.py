@@ -66,7 +66,7 @@ class HeroChoseMenu:
         if self.next_level: return True
 
     def draw(self):
-        self.background.draw(screen,(0, 0))
+        self.background.draw((0, 0))
         # self.draw_clouds(screen)
         self.mouse_check()
         # The carder text

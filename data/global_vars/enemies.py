@@ -17,6 +17,8 @@ enemies = {
 }
 
 enemy_intentions = {
+    'L': 'data/images\\elements\\the_enemy_intentions\\debuff.png',
+    'M': 'data/images\\elements\\the_enemy_intentions\\master.png',
     'A': {
         '10': 'data/images\\elements\\the_enemy_intentions\\small_attack.png',
         '20': 'data/images\\elements\\the_enemy_intentions\\attack.png',
@@ -24,7 +26,7 @@ enemy_intentions = {
         '100000': 'data/images\\elements\\the_enemy_intentions\\really_hard_attack.png'
     },
     'H': 'data/images\\elements\\the_enemy_intentions\\heal.png',
-    'B': 'data/images\\elements\\the_enemy_intentions\\chars.png',
+    'B': 'data/images\\elements\\the_enemy_intentions\\buff.png',
     'D': 'data/images\\elements\\the_enemy_intentions\\def.png',
     'C': 'data/images\\elements\\the_enemy_intentions\\def.png',
     'S': 'data/images\\elements\\the_enemy_intentions\\question.png',
@@ -33,7 +35,8 @@ enemy_intentions = {
 
 level_enemy_types = {
     # 1: ['guardian', 'wizard', 'snakes', 'joker'],
-    1: ['joker'],
+    # 1: ['joker'],
+    1: ['fear'],
     2: ['fear', 'fear_ghost', 'flowers', 'flowers2']
     # 3: ['wizard&guardian']
 }

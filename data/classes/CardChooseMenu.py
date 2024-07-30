@@ -105,6 +105,5 @@ class CardChooseMenu:
     def draw(self):
         self.background.draw((0, 0))
         if self.mouse_check():
-            print("RET")
             return True
         # The carder text

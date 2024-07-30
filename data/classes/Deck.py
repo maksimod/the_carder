@@ -72,12 +72,11 @@ class Deck:
             elif action[0] == 'P':
                 if action[1] == 'D':
                     defence = int(action[2:])
-                    self.player.df += defence
+                    self.player.get_defense(defence)
             elif action[0] == 'E':
                 aim = self.enemy.get_enemies()[enemy_index]
                 if action[1] == 'A':
                     attack = int(action[2:])
-                    # print(f'attack = {attack}')
                     aim.get_damage(attack)
                 else:
                     aim.states[action[1:3]] = int(action[3:])
